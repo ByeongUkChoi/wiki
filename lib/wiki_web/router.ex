@@ -18,6 +18,8 @@ defmodule WikiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    live "/document", DocumentLive
   end
 
   # Other scopes may use custom stacks.

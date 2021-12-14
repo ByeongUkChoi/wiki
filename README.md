@@ -1,5 +1,9 @@
 # Wiki
 
+To start your Database server:
+  * `docker pull postgres`
+  * `docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres`
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
