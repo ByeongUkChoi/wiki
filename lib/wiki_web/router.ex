@@ -19,7 +19,7 @@ defmodule WikiWeb.Router do
 
     get "/", PageController, :index
 
-    live "/document", DocumentLive
+    live "/documents", DocumentLive.Index
   end
 
   # Other scopes may use custom stacks.
