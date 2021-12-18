@@ -1,15 +1,4 @@
-<h2>Listing Documents, page name=</h2>
-
-<table phx-window-keydown="keydown" phx-throttle="500">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>author</th>
-      <th>created at</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+<h2><%= @title %></h2>
+<small>Posted <time><%= @created_at %></time></small>
+<hr>
+<p><%= @content %></p>
