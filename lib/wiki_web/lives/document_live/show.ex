@@ -1,5 +1,5 @@
 defmodule WikiWeb.DocumentLive.Show do
-  use Phoenix.LiveView
+  use WikiWeb, :live_view
 
   def mount(_params, _session, socket) do
     # temperature = Thermostat.get_user_reading(user_id)

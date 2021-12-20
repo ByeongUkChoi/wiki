@@ -20,6 +20,7 @@ defmodule WikiWeb.Router do
     get "/", PageController, :index
 
     live "/documents", DocumentLive.Index, :index
+    live "/documents/new", DocumentLive.New, :new
     live "/documents/:id", DocumentLive.Show, :show
   end
 
