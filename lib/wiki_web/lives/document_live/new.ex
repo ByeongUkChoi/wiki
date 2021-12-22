@@ -15,7 +15,15 @@ defmodule WikiWeb.DocumentLive.New do
       |> Document.changeset(document)
       |> Map.put(:action, :insert)
 
-    IO.inspect(changeset)
     {:noreply, assign(socket, changeset: changeset)}
+  end
+
+  def handle_event("save", %{"document" => _document}, socket) do
+    # insert db
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "document created")
+     |> push_redirect(to: Routes.document_show_path(socket, :show, 999))}
   end
 end
