@@ -22,6 +22,7 @@ defmodule WikiWeb.Router do
     live "/documents", DocumentLive.Index, :index
     live "/documents/new", DocumentLive.New, :new
     live "/documents/:id", DocumentLive.Show, :show
+    live "/documents/:id/edit", DocumentLive.Edit, :edit
   end
 
   # Other scopes may use custom stacks.
