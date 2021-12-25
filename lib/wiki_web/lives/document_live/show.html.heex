@@ -2,3 +2,5 @@
 <small>Posted <time><%= @created_at %></time></small>
 <hr>
 <p><%= @content %></p>
+<span><%= live_redirect "Edit", to: Routes.document_edit_path(@socket, :edit, @id) %></span>
+<span><%= live_redirect "Back", to: Routes.document_index_path(@socket, :index) %></span>
