@@ -18,3 +18,12 @@
     <% end %>
   </tbody>
 </table>
+<%= if @page > 1 do %>
+  <span><%= live_patch "prev", to: Routes.document_index_path(@socket, :index, page: @page - 1) %></span>
+<% end %>
+<%= for i <- (@page - 5)..(@page + 5), i > 0 and i <= ceil(@total_count / @per_page) do %>
+  <span><%= live_patch "#{i}", to: Routes.document_index_path(@socket, :index, page: i) %></span>
+<% end %>
+<%= if @page < ceil(@total_count / @per_page) do %>
+  <span><%= live_patch "next", to: Routes.document_index_path(@socket, :index, page: @page + 1) %></span>
+<% end %>

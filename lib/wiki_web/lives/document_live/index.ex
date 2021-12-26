@@ -8,14 +8,14 @@ defmodule WikiWeb.DocumentLive.Index do
   end
 
   def handle_params(params, _url, socket) do
-    [page: page, per_page: per_page] = parse_pagination(params)
+    [page: page, per_page: per_page] = parse_pageable(params)
     [items: items, total_count: total_count] = test_items(page, per_page)
 
     {:noreply,
      assign(socket, items: items, page: page, per_page: per_page, total_count: total_count)}
   end
 
-  defp parse_pagination(params) do
+  defp parse_pageable(params) do
     page = params |> Map.get("page", "1") |> String.to_integer()
     per_page = params |> Map.get("per_page", "5") |> String.to_integer()
     [page: page, per_page: per_page]
@@ -45,9 +45,7 @@ defmodule WikiWeb.DocumentLive.Index do
         }
       end)
 
-    sub_items =
-      items
-      |> Enum.slice((page - 1) * per_page, page * per_page)
+    sub_items = items |> Enum.slice((page - 1) * per_page, per_page)
 
     [items: sub_items, total_count: length(items)]
   end
