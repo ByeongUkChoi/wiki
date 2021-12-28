@@ -15,9 +15,11 @@ defmodule Wiki.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Wiki.PubSub},
       # Start the Endpoint (http/https)
-      WikiWeb.Endpoint
+      WikiWeb.Endpoint,
       # Start a worker by calling: Wiki.Worker.start_link(arg)
       # {Wiki.Worker, arg}
+      # db
+      {Wiki.Db.GenServer, %{}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
