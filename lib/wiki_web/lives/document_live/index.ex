@@ -1,9 +1,10 @@
 defmodule WikiWeb.DocumentLive.Index do
   use WikiWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    # temperature = Thermostat.get_user_reading(user_id)
+  @first_page 1
+  @page_size 5
 
+  def mount(_params, _session, socket) do
     {:ok, assign(socket, [])}
   end
 
@@ -16,8 +17,8 @@ defmodule WikiWeb.DocumentLive.Index do
   end
 
   defp parse_pageable(params) do
-    page = params |> Map.get("page", "1") |> String.to_integer()
-    per_page = params |> Map.get("per_page", "5") |> String.to_integer()
+    page = params |> Map.get("page", "#{@first_page}") |> String.to_integer()
+    per_page = params |> Map.get("per_page", "#{@page_size}") |> String.to_integer()
     [page: page, per_page: per_page]
   end
 

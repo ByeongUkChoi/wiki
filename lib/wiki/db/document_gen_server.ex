@@ -10,24 +10,24 @@ defmodule Wiki.Db.GenServer do
     {:ok, init_param}
   end
 
-  def load_all_params do
-    GenServer.call(__MODULE__, :load_all)
+  def get_all do
+    GenServer.call(__MODULE__, :get_all)
   end
 
   # uuid
-  def load_one_params(id) do
-    GenServer.call(__MODULE__, {:load_one, id})
+  def get(id) do
+    GenServer.call(__MODULE__, {:get, id})
   end
 
-  def save_params(id, params) do
+  def save(id, params) do
     GenServer.cast(__MODULE__, {:save, id, params})
   end
 
-  def delete_one_params(id) do
+  def delete(id) do
     GenServer.cast(__MODULE__, {:delete_one, id})
   end
 
-  def delete_all_params do
+  def delete_all do
     GenServer.cast(__MODULE__, :delete_all)
   end
 
@@ -35,11 +35,11 @@ defmodule Wiki.Db.GenServer do
 
   # server api
 
-  def handle_call(:load_all, _from, init_param) do
+  def handle_call(:get_all, _from, init_param) do
     {:reply, init_param, init_param}
   end
 
-  def handle_call({:load_one, id}, _from, init_param) do
+  def handle_call({:get, id}, _from, init_param) do
     new_state = Map.get(init_param, id)
     {:reply, new_state, init_param}
   end
@@ -47,7 +47,6 @@ defmodule Wiki.Db.GenServer do
   def handle_cast({:save, id, params}, init_param) do
     new_state = Map.update(init_param, id, params, fn _old_map -> params end)
 
-    IO.inspect(new_state)
     {:noreply, new_state}
   end
 
