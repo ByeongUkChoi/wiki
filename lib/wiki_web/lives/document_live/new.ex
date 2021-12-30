@@ -3,7 +3,7 @@ defmodule WikiWeb.DocumentLive.New do
 
   import Ecto.Changeset
 
-  alias Wiki.Documents.Document
+  alias Wiki.DocumentStore.Document
 
   def mount(_params, _session, socket) do
     {:ok, assign(socket, changeset: change(%Document{}))}

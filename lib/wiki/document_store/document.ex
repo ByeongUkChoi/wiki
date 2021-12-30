@@ -1,6 +1,15 @@
-defmodule Wiki.Documents.Document do
+defmodule Wiki.DocumentStore.Document do
   use Ecto.Schema
   import Ecto.Changeset
+
+  @type id :: integer()
+  @type t :: %__MODULE__{
+          id: id,
+          title: String.t(),
+          content: String.t(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   schema "documents" do
     field :title, :string

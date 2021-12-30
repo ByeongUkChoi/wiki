@@ -1,7 +1,7 @@
 defmodule WikiWeb.DocumentLive.Edit do
   use WikiWeb, :live_view
 
-  alias Wiki.Documents.Document
+  alias Wiki.DocumentStore.Document
 
   def mount(_params, _session, socket) do
     # temperature = Thermostat.get_user_reading(user_id)
