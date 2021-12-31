@@ -18,8 +18,8 @@ defmodule Wiki.Application do
       WikiWeb.Endpoint,
       # Start a worker by calling: Wiki.Worker.start_link(arg)
       # {Wiki.Worker, arg}
-      # db
-      {Wiki.Db.GenServer, %{}}
+      # data store
+      {Wiki.DocumentStore.GenServerImpl, %{}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

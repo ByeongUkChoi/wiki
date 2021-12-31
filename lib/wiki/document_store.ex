@@ -7,9 +7,9 @@ defmodule Wiki.DocumentStore do
   @type per_page :: integer()
 
   @callback fetch_by_id(Document.id()) :: {:ok, Document.t()} | {:error, :not_found}
-  @callback fetchAll(page_num: page_num, per_page: per_page) :: list(Document.t())
+  @callback fetch_all(page_num: page_num, per_page: per_page) :: list(Document.t())
   @callback create(title: String.t(), content: String.t()) ::
-              {:ok, Document.t()} | {:error, :failed_insert}
-  @callback update(Document.t()) :: {:ok, Document.t()} | {:error, any()}
+              {:ok, Document.t()} | {:error, :failed_create}
+  @callback update(Document.t()) :: {:ok, Document.t()} | {:error, :failed_update}
   @callback delete_by_id(Document.id()) :: :ok | :not_found
 end
