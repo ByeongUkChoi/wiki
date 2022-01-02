@@ -9,7 +9,8 @@ defmodule Wiki.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      Wiki.Repo,
+      # TODO: disable repo
+      # Wiki.Repo,
       # Start the Telemetry supervisor
       WikiWeb.Telemetry,
       # Start the PubSub system

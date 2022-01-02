@@ -48,28 +48,47 @@ defmodule Wiki.DocumentStore.GenServerImpl do
     end
   end
 
+  @impl true
+  def delete_by_id(id) do
+    document = GenServer.call(__MODULE__, {:fetch_by_id, id})
+
+    with true <- is_map(document) do
+      GenServer.cast(__MODULE__, {:delete_by_id, id})
+      :ok
+    else
+      _ -> :not_found
+    end
+  end
+
   # ====================
   # server api
   # ====================
 
   @impl true
   def handle_call({:fetch_by_id, id}, _from, init_param) do
-    new_state = init_param |> Map.get(id) |> Map.put(:id, id)
-    {:reply, new_state, init_param}
+    {:reply, fetch_and_put_id(init_param, id), init_param}
   end
 
   @impl true
   def handle_call({:fetch_all, page_num, per_page}, _from, init_param) do
     start_index = (page_num - 1) * per_page
     ids = init_param |> Map.keys() |> Enum.slice(start_index, per_page)
-    documents = ids |> Enum.map(&(init_param |> Map.get(&1) |> Map.put(:id, &1)))
+    documents = ids |> Enum.map(&fetch_and_put_id(init_param, &1))
     {:reply, documents, init_param}
   end
+
+  defp fetch_and_put_id(map, id), do: map |> Map.get(id) |> Map.put(:id, id)
 
   @impl true
   def handle_cast({:create, id, params}, init_param) do
     new_state = Map.update(init_param, id, params, fn _old_map -> params end)
 
+    {:noreply, new_state}
+  end
+
+  @impl true
+  def handle_cast({:delete_by_id, id}, init_param) do
+    new_state = Map.delete(init_param, id)
     {:noreply, new_state}
   end
 
