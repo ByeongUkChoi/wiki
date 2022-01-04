@@ -19,9 +19,7 @@ defmodule Wiki.DocumentStore.GenServerImpl do
 
   @impl true
   def fetch_by_id(id) do
-    document = GenServer.call(__MODULE__, {:fetch_by_id, id})
-
-    with true <- is_map(document) do
+    with document when is_map(document) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
       {:ok, struct(Document, document)}
     else
       _ -> {:error, :not_found}
@@ -41,10 +39,21 @@ defmodule Wiki.DocumentStore.GenServerImpl do
     id = next_id()
     GenServer.cast(__MODULE__, {:create, id, %{title: title, content: content}})
 
-    struct(Document, %{id: id, title: title, content: content})
-    |> case do
-      %Document{} = document -> {:ok, document}
+    with document when is_map(document) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
+      {:ok, struct(Document, document)}
+    else
       _ -> {:error, :failed_create}
+    end
+  end
+
+  @impl true
+  def update(%{id: id, title: title, content: content}) do
+    GenServer.cast(__MODULE__, {:update, id, %{title: title, content: content}})
+
+    with document when is_map(document) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
+      {:ok, struct(Document, document)}
+    else
+      _ -> {:error, :failed_update}
     end
   end
 
@@ -81,6 +90,13 @@ defmodule Wiki.DocumentStore.GenServerImpl do
 
   @impl true
   def handle_cast({:create, id, params}, init_param) do
+    new_state = Map.update(init_param, id, params, fn _old_map -> params end)
+
+    {:noreply, new_state}
+  end
+
+  @impl true
+  def handle_cast({:update, id, params}, init_param) do
     new_state = Map.update(init_param, id, params, fn _old_map -> params end)
 
     {:noreply, new_state}
