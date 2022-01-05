@@ -1,5 +1,5 @@
 <h2><%= @title %></h2>
-<small>Posted <time><%= @created_at %></time></small>
+<small>Posted <time><%= @inserted_at %></time></small>
 <hr>
 <p><%= @content %></p>
 <span><%= live_redirect "Edit", to: Routes.document_edit_path(@socket, :edit, @id) %></span>

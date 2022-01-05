@@ -5,6 +5,12 @@ defmodule WikiWeb.DocumentLive.New do
 
   alias Wiki.DocumentStore.Document
 
+  @document_store Application.compile_env(
+                    :wiki,
+                    :document_store,
+                    Wiki.DocumentStore.GenServerImpl
+                  )
+
   def mount(_params, _session, socket) do
     {:ok, assign(socket, changeset: change(%Document{}))}
   end
@@ -18,12 +24,12 @@ defmodule WikiWeb.DocumentLive.New do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  def handle_event("save", %{"document" => _document}, socket) do
-    # insert db
-
-    {:noreply,
-     socket
-     |> put_flash(:info, "document created")
-     |> push_redirect(to: Routes.document_show_path(socket, :show, 999))}
+  def handle_event("save", %{"document" => %{"title" => title, "content" => content}}, socket) do
+    with {:ok, %{id: document_id}} <- @document_store.create(title: title, content: content) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "document created")
+       |> push_redirect(to: Routes.document_show_path(socket, :show, document_id))}
+    end
   end
 end

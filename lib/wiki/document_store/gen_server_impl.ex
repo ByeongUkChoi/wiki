@@ -47,7 +47,7 @@ defmodule Wiki.DocumentStore.GenServerImpl do
   end
 
   @impl true
-  def update(%{id: id, title: title, content: content}) do
+  def update(%Document{id: id, title: title, content: content}) do
     GenServer.cast(__MODULE__, {:update, id, %{title: title, content: content}})
 
     with document when is_map(document) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
