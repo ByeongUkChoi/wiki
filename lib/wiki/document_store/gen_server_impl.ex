@@ -35,6 +35,12 @@ defmodule Wiki.DocumentStore.GenServerImpl do
   end
 
   @impl true
+  # def get_total_count, do: GenServer.call(__MODULE__, {:get_total_count})
+  def get_total_count do
+    GenServer.call(__MODULE__, {:get_total_count})
+  end
+
+  @impl true
   def create(title: title, content: content) do
     id = next_id()
     GenServer.cast(__MODULE__, {:create, id, %{title: title, content: content}})
@@ -87,6 +93,12 @@ defmodule Wiki.DocumentStore.GenServerImpl do
   end
 
   defp fetch_and_put_id(map, id), do: map |> Map.get(id) |> Map.put(:id, id)
+
+  @impl true
+  def handle_call({:get_total_count}, _from, init_param) do
+    count = Enum.count(init_param, fn {k, _v} -> is_integer(k) end)
+    {:reply, count, init_param}
+  end
 
   @impl true
   def handle_cast({:create, id, params}, init_param) do
