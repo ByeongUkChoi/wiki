@@ -3,23 +3,24 @@ defmodule WikiWeb.DocumentLive.Edit do
 
   alias Wiki.DocumentStore.Document
 
+  @document_store Application.compile_env(
+                    :wiki,
+                    :document_store,
+                    Wiki.DocumentStore.GenServerImpl
+                  )
+
   def mount(_params, _session, socket) do
     # temperature = Thermostat.get_user_reading(user_id)
     {:ok, assign(socket, [])}
   end
 
   def handle_params(%{"id" => id}, _url, socket) do
-    changeset =
-      %Document{}
-      |> Document.changeset(%{
-        id: id,
-        title: "Hello world. ##{id}",
-        content: "This is wiki",
-        created_at: DateTime.utc_now() |> DateTime.truncate(:second)
-      })
-      |> Map.put(:action, :update)
-
-    {:noreply, assign(socket, changeset: changeset)}
+    with id <- String.to_integer(id),
+         {:ok, document} <- @document_store.fetch_by_id(id) do
+      changeset = document |> Document.changeset(%{}) |> Map.put(:action, :update)
+      {:noreply, assign(socket, document: document, changeset: changeset)}
+    end
+    |> IO.inspect()
   end
 
   def handle_event("validate", %{"document" => document}, socket) do
@@ -33,17 +34,19 @@ defmodule WikiWeb.DocumentLive.Edit do
 
   def handle_event(
         "save",
-        %{"document" => _document},
-        %{assigns: %{changeset: _changeset}} = socket
+        %{"document" => document_params},
+        %{assigns: %{document: document}} = socket
       ) do
-    # update db
+    changed_document =
+      document
+      |> Document.changeset(document_params)
+      |> Ecto.Changeset.apply_changes()
 
-    # TODO: test
-    document_id = 999
-
-    {:noreply,
-     socket
-     |> put_flash(:info, "document created")
-     |> push_redirect(to: Routes.document_show_path(socket, :show, document_id))}
+    with {:ok, _document} <- @document_store.update(changed_document) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "document created")
+       |> push_redirect(to: Routes.document_show_path(socket, :show, changed_document.id))}
+    end
   end
 end
