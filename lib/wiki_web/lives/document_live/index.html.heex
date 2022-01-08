@@ -13,7 +13,7 @@
       <tr>
         <td><%= live_redirect item.title, to: Routes.document_show_path(@socket, :show, item.id) %></td>
         <%# <td><%= item.author_name </td> %>
-        <td><%= item.inserted_at %></td>
+        <td><%= DateTime.truncate(item.inserted_at, :second) %></td>
       </tr>
     <% end %>
   </tbody>
