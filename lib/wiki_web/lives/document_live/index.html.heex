@@ -27,3 +27,6 @@
 <%= if @page < ceil(@total_count / @per_page) do %>
   <span><%= live_patch ">", to: Routes.document_index_path(@socket, :index, page: @page + 1) %></span>
 <% end %>
+<br>
+<hr>
+<span><%= live_patch "create", to: Routes.document_new_path(@socket, :new) %></span>

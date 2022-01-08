@@ -102,6 +102,13 @@ defmodule Wiki.DocumentStore.GenServerImpl do
 
   @impl true
   def handle_cast({:create, id, params}, init_param) do
+    now = DateTime.utc_now()
+
+    params =
+      params
+      |> Map.put(:inserted_at, now)
+      |> Map.put(:updated_at, now)
+
     new_state = Map.update(init_param, id, params, fn _old_map -> params end)
 
     {:noreply, new_state}
@@ -109,7 +116,13 @@ defmodule Wiki.DocumentStore.GenServerImpl do
 
   @impl true
   def handle_cast({:update, id, params}, init_param) do
-    new_state = Map.update(init_param, id, params, fn _old_map -> params end)
+    updated_params =
+      init_param
+      |> Map.get(id)
+      |> Map.merge(params)
+      |> Map.put(:updated_at, DateTime.utc_now())
+
+    new_state = Map.update(init_param, id, updated_params, fn _old_map -> updated_params end)
 
     {:noreply, new_state}
   end

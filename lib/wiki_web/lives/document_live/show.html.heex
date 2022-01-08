@@ -1,6 +1,11 @@
 <h2><%= @title %></h2>
-<small>Posted <time><%= @inserted_at %></time></small>
+<small>Posted <time><%= DateTime.truncate(@inserted_at, :second) %></time></small>
+<%= if DateTime.compare(@inserted_at, @updated_at) != :eq do %>
+  <small>&nbsp; Edited <time><%= DateTime.truncate(@updated_at, :second) %></time></small>
+<% end %>
 <hr>
 <p><%= @content %></p>
+<hr>
 <span><%= live_redirect "Edit", to: Routes.document_edit_path(@socket, :edit, @id) %></span>
+&nbsp;
 <span><%= live_redirect "Back", to: Routes.document_index_path(@socket, :index) %></span>
