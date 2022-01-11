@@ -19,10 +19,8 @@ defmodule Wiki.SpaceStore.GenServerImpl do
 
   @impl true
   def fetch_by_id(id) do
-    with space when is_map(space) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
+    with {:ok, space} <- _fetch_by_id(id) do
       {:ok, struct(Space, space)}
-    else
-      _ -> {:error, :not_found}
     end
   end
 
@@ -30,8 +28,7 @@ defmodule Wiki.SpaceStore.GenServerImpl do
   def fetch_all(page_num: page_num, per_page: per_page) do
     spaces = GenServer.call(__MODULE__, {:fetch_all, page_num, per_page})
 
-    spaces
-    |> Enum.map(&struct(Space, &1))
+    spaces |> Enum.map(&struct(Space, &1))
   end
 
   @impl true
@@ -42,7 +39,7 @@ defmodule Wiki.SpaceStore.GenServerImpl do
     id = next_id()
     GenServer.cast(__MODULE__, {:create, id, %{name: name}})
 
-    with space when is_map(space) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
+    with {:ok, space} <- _fetch_by_id(id) do
       {:ok, struct(Space, space)}
     else
       _ -> {:error, :failed_create}
@@ -53,7 +50,7 @@ defmodule Wiki.SpaceStore.GenServerImpl do
   def update(%Space{id: id, name: name}) do
     GenServer.cast(__MODULE__, {:update, id, %{name: name}})
 
-    with space when is_map(space) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
+    with {:ok, space} <- _fetch_by_id(id) do
       {:ok, struct(Space, space)}
     else
       _ -> {:error, :failed_update}
@@ -62,13 +59,19 @@ defmodule Wiki.SpaceStore.GenServerImpl do
 
   @impl true
   def delete_by_id(id) do
-    space = GenServer.call(__MODULE__, {:fetch_by_id, id})
-
-    with true <- is_map(space) do
+    with {:ok, _space} <- _fetch_by_id(id) do
       GenServer.cast(__MODULE__, {:delete_by_id, id})
       :ok
     else
       _ -> :not_found
+    end
+  end
+
+  defp _fetch_by_id(id) do
+    GenServer.call(__MODULE__, {:fetch_by_id, id})
+    |> case do
+      map when is_map(map) -> {:ok, map}
+      _ -> {:error, :not_found}
     end
   end
 

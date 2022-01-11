@@ -22,7 +22,6 @@ defmodule Wiki.Application do
       # data store
       {Wiki.DocumentStore.GenServerImpl, %{}},
       {Wiki.SpaceStore.GenServerImpl, %{}}
-
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
