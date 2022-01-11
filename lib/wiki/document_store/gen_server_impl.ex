@@ -35,10 +35,7 @@ defmodule Wiki.DocumentStore.GenServerImpl do
   end
 
   @impl true
-  # def get_total_count, do: GenServer.call(__MODULE__, {:get_total_count})
-  def get_total_count do
-    GenServer.call(__MODULE__, {:get_total_count})
-  end
+  def get_total_count, do: GenServer.call(__MODULE__, {:get_total_count})
 
   @impl true
   def create(title: title, content: content) do
@@ -88,8 +85,8 @@ defmodule Wiki.DocumentStore.GenServerImpl do
   def handle_call({:fetch_all, page_num, per_page}, _from, init_param) do
     start_index = (page_num - 1) * per_page
     ids = init_param |> Map.keys() |> Enum.slice(start_index, per_page)
-    documents = ids |> Enum.map(&fetch_and_put_id(init_param, &1))
-    {:reply, documents, init_param}
+    items = ids |> Enum.map(&fetch_and_put_id(init_param, &1))
+    {:reply, items, init_param}
   end
 
   defp fetch_and_put_id(map, id), do: map |> Map.get(id) |> Map.put(:id, id)
