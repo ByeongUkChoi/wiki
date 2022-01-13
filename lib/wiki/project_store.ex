@@ -1,7 +1,7 @@
-defmodule Wiki.SpaceStore do
+defmodule Wiki.ProjectStore do
   @moduledoc false
 
-  alias Wiki.SpaceStore.Space
+  alias Wiki.ProjectStore.Project
 
   @type page_num :: integer()
   @type per_page :: integer()

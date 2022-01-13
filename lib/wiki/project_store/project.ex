@@ -1,4 +1,4 @@
-defmodule Wiki.SpaceStore.Space do
+defmodule Wiki.ProjectStore.Project do
   use Ecto.Schema
 
   @type id :: integer()
@@ -9,7 +9,7 @@ defmodule Wiki.SpaceStore.Space do
           updated_at: DateTime.t()
         }
 
-  schema "spaces" do
+  schema "projects" do
     field :name, :string
 
     timestamps()

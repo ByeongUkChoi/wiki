@@ -1,12 +1,14 @@
 defmodule Wiki.DocumentStore.Document do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Wiki.ProjectStore.Project
 
   @type id :: integer()
   @type t :: %__MODULE__{
           id: id,
           title: String.t(),
           content: String.t(),
+          project_id: Project.id(),
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
@@ -14,6 +16,7 @@ defmodule Wiki.DocumentStore.Document do
   schema "documents" do
     field :title, :string
     field :content, :string
+    field :project_id, :integer
 
     timestamps()
   end
@@ -21,8 +24,8 @@ defmodule Wiki.DocumentStore.Document do
   @doc false
   def changeset(document, attrs) do
     document
-    |> cast(attrs, [:title, :content])
-    |> validate_required([:title, :content])
+    |> cast(attrs, [:title, :content, :project_id, :space_id])
+    |> validate_required([:title, :content, :project_id, :space_id])
     |> validate_length(:title, max: 255)
   end
 end

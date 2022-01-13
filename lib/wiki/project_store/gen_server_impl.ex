@@ -1,11 +1,11 @@
-defmodule Wiki.SpaceStore.GenServerImpl do
+defmodule Wiki.ProjectStore.GenServerImpl do
   @moduledoc false
 
   use GenServer
 
-  alias Wiki.SpaceStore.Space
+  alias Wiki.ProjectStore.Project
 
-  @behaviour Wiki.SpaceStore
+  @behaviour Wiki.ProjectStore
 
   # client api
   def start_link(init_param) do
