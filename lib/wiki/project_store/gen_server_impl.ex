@@ -20,7 +20,7 @@ defmodule Wiki.ProjectStore.GenServerImpl do
   @impl true
   def fetch_by_id(id) do
     with {:ok, space} <- _fetch_by_id(id) do
-      {:ok, struct(Space, space)}
+      {:ok, struct(Project, space)}
     end
   end
 
@@ -28,7 +28,7 @@ defmodule Wiki.ProjectStore.GenServerImpl do
   def fetch_all(page_num: page_num, per_page: per_page) do
     spaces = GenServer.call(__MODULE__, {:fetch_all, page_num, per_page})
 
-    spaces |> Enum.map(&struct(Space, &1))
+    spaces |> Enum.map(&struct(Project, &1))
   end
 
   @impl true
@@ -40,18 +40,18 @@ defmodule Wiki.ProjectStore.GenServerImpl do
     GenServer.cast(__MODULE__, {:create, id, %{name: name}})
 
     with {:ok, space} <- _fetch_by_id(id) do
-      {:ok, struct(Space, space)}
+      {:ok, struct(Project, space)}
     else
       _ -> {:error, :failed_create}
     end
   end
 
   @impl true
-  def update(%Space{id: id, name: name}) do
+  def update(%Project{id: id, name: name}) do
     GenServer.cast(__MODULE__, {:update, id, %{name: name}})
 
     with {:ok, space} <- _fetch_by_id(id) do
-      {:ok, struct(Space, space)}
+      {:ok, struct(Project, space)}
     else
       _ -> {:error, :failed_update}
     end
