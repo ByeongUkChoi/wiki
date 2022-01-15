@@ -1,2 +1,3 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(Wiki.Repo, :manual)
+# TODO: disable repo
+# Ecto.Adapters.SQL.Sandbox.mode(Wiki.Repo, :manual)
