@@ -11,20 +11,28 @@ defmodule WikiWeb.DocumentLive.New do
                     Wiki.DocumentStore.GenServerImpl
                   )
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, changeset: change(%Document{}))}
+  def mount(%{"project_id" => project_id}, _session, socket) do
+    # TODO: parse project_id plugin
+    {:ok, assign(socket, changeset: change(%Document{}), project_id: project_id)}
   end
 
-  def handle_event("validate", %{"document" => document}, socket) do
+  def handle_event(
+        "validate",
+        %{"document" => document},
+        %{assigns: %{project_id: project_id}} = socket
+      ) do
+    attrs = document |> Map.put("project_id", String.to_integer(project_id))
+
     changeset =
       %Document{}
-      |> Document.changeset(document)
+      |> Document.changeset(attrs)
       |> Map.put(:action, :insert)
 
     {:noreply, assign(socket, changeset: changeset)}
   end
 
   def handle_event("save", %{"document" => %{"title" => title, "content" => content}}, socket) do
+    # TODO:
     with {:ok, %{id: document_id}} <- @document_store.create(title: title, content: content) do
       {:noreply,
        socket

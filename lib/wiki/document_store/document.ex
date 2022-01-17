@@ -24,8 +24,8 @@ defmodule Wiki.DocumentStore.Document do
   @doc false
   def changeset(document, attrs) do
     document
-    |> cast(attrs, [:title, :content, :project_id, :space_id])
-    |> validate_required([:title, :content, :project_id, :space_id])
+    |> cast(attrs, [:title, :content, :project_id])
+    |> validate_required([:title, :content, :project_id])
     |> validate_length(:title, max: 255)
   end
 end

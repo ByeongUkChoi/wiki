@@ -14,13 +14,19 @@ defmodule WikiWeb.DocumentLive.Index do
     {:ok, assign(socket, [])}
   end
 
-  def handle_params(params, _url, socket) do
+  def handle_params(%{"project_id" => project_id} = params, _url, socket) do
     [page: page, per_page: per_page] = parse_pageable(params)
     items = @document_store.fetch_all(page_num: page, per_page: per_page)
     total_count = @document_store.get_total_count()
 
     {:noreply,
-     assign(socket, items: items, page: page, per_page: per_page, total_count: total_count)}
+     assign(socket,
+       items: items,
+       page: page,
+       per_page: per_page,
+       total_count: total_count,
+       project_id: project_id
+     )}
   end
 
   defp parse_pageable(params) do

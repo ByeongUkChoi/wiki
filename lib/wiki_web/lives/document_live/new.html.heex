@@ -14,4 +14,4 @@
   </div>
 </.form>
 
-<span><%= live_redirect "Back", to: Routes.document_index_path(@socket, :index) %></span>
+<span><%= live_redirect "Back", to: Routes.document_index_path(@socket, :index, @project_id) %></span>
