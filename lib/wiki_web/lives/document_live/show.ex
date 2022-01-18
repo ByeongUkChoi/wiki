@@ -11,10 +11,15 @@ defmodule WikiWeb.DocumentLive.Show do
     {:ok, assign(socket, [])}
   end
 
-  def handle_params(%{"id" => id}, _url, socket) do
+  def handle_params(%{"project_id" => project_id, "id" => id}, _url, socket) do
     with id <- String.to_integer(id),
          {:ok, document} <- @document_store.fetch_by_id(id) do
-      {:noreply, socket |> assign(Map.from_struct(document))}
+      attrs =
+        document
+        |> Map.from_struct()
+        |> Map.put(:project_id, project_id)
+
+      {:noreply, socket |> assign(attrs)}
     end
   end
 end

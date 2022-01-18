@@ -6,6 +6,6 @@
 <hr>
 <p><%= @content %></p>
 <hr>
-<span><%= live_redirect "Edit", to: Routes.document_edit_path(@socket, :edit, @id) %></span>
+<span><%= live_redirect "Edit", to: Routes.document_edit_path(@socket, :edit, @project_id, @id) %></span>
 &nbsp;
-<span><%= live_redirect "Back", to: Routes.document_index_path(@socket, :index) %></span>
+<span><%= live_redirect "Back", to: Routes.document_index_path(@socket, :index, @project_id) %></span>

@@ -14,13 +14,12 @@ defmodule WikiWeb.DocumentLive.Edit do
     {:ok, assign(socket, [])}
   end
 
-  def handle_params(%{"id" => id}, _url, socket) do
+  def handle_params(%{"project_id" => project_id, "id" => id}, _url, socket) do
     with id <- String.to_integer(id),
          {:ok, document} <- @document_store.fetch_by_id(id) do
       changeset = document |> Document.changeset(%{}) |> Map.put(:action, :update)
-      {:noreply, assign(socket, document: document, changeset: changeset)}
+      {:noreply, assign(socket, document: document, changeset: changeset, project_id: project_id)}
     end
-    |> IO.inspect()
   end
 
   def handle_event("validate", %{"document" => document}, socket) do
