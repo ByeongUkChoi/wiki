@@ -14,16 +14,23 @@ defmodule WikiWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :ensure_project do
+    plug WikiWeb.Plugs.EnsureProject
+  end
+
   scope "/", WikiWeb do
     pipe_through :browser
 
     get "/", PageController, :index
 
-    live "/projects/:project_id/documents", DocumentLive.Index, :index
-    # TODO: save
-    live "/projects/:project_id/documents/new", DocumentLive.New, :new
-    live "/projects/:project_id/documents/:id", DocumentLive.Show, :show
-    live "/projects/:project_id/documents/:id/edit", DocumentLive.Edit, :edit
+    scope "/projects/:project_id" do
+      pipe_through :ensure_project
+      live "/documents", DocumentLive.Index, :index
+      # TODO: save
+      live "/documents/new", DocumentLive.New, :new
+      live "/documents/:id", DocumentLive.Show, :show
+      live "/documents/:id/edit", DocumentLive.Edit, :edit
+    end
   end
 
   # Other scopes may use custom stacks.
