@@ -38,29 +38,4 @@ defmodule WikiWeb.DocumentLive.Index do
   def handle_event("keydown", _, socket) do
     {:noreply, socket}
   end
-
-  defp test_items(page, per_page) do
-    titles = ["Hello", "World", "Good", "Starcraft", "Happy", "Show me the money", "Hell", "TIL"]
-    authors = ["Tom", "James", "Mike", "Kim", "Lee", "Ali", "King"]
-    random_title = fn titles -> Enum.random(titles) end
-    random_author = fn authors -> Enum.random(authors) end
-
-    random_time = fn ->
-      DateTime.utc_now() |> DateTime.add(Enum.random(-1..-9)) |> DateTime.truncate(:second)
-    end
-
-    items =
-      Enum.map(1..27, fn i ->
-        %{
-          id: i,
-          title: random_title.(titles),
-          author_name: random_author.(authors),
-          created_at: random_time.()
-        }
-      end)
-
-    sub_items = items |> Enum.slice((page - 1) * per_page, per_page)
-
-    [items: sub_items, total_count: length(items)]
-  end
 end
