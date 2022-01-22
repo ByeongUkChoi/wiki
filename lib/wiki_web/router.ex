@@ -17,7 +17,8 @@ defmodule WikiWeb.Router do
   scope "/", WikiWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    # get "/", PageController, :index
+    live "/", PageLive.Show
 
     scope "/projects/:project_id" do
       live "/documents", DocumentLive.Index, :index
