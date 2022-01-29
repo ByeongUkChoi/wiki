@@ -7,12 +7,30 @@ defmodule WikiWeb.PageLive do
       <%= live_render(@socket, WikiWeb.PageLive.Index, id: "index") %>
     </div>
     <div style="margin-left:25%">
-      <%= live_render(@socket, WikiWeb.PageLive.Show, id: "show") %>
+      <%= render(@action, assigns) %>
     </div>
     """
   end
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, [])}
+  defp render(:index, assigns) do
+    ~H"""
+    <%= live_render(@socket, WikiWeb.PageLive.Index, id: "index") %>
+    """
+  end
+
+  defp render(:show, assigns) do
+    ~H"""
+    <%= live_render(@socket, WikiWeb.PageLive.Show, id: "show") %>
+    """
+  end
+
+  defp render(:new, assigns) do
+    ~H"""
+    <%= live_render(@socket, WikiWeb.PageLive.New, id: "new") %>
+    """
+  end
+
+  def mount(_params, %{"action" => action} = _session, socket) do
+    {:ok, assign(socket, action: action)}
   end
 end
