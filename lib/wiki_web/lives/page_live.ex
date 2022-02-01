@@ -12,15 +12,15 @@ defmodule WikiWeb.PageLive do
     """
   end
 
-  defp render(:index, assigns) do
+  defp render(:main, assigns) do
     ~H"""
-    <%= live_render(@socket, WikiWeb.PageLive.Index, id: "index") %>
+    <p>main</p>
     """
   end
 
-  defp render(:show, assigns) do
+  defp render(:show, %{id: id} = assigns) do
     ~H"""
-    <%= live_render(@socket, WikiWeb.PageLive.Show, id: "show") %>
+    <%= live_render(@socket, WikiWeb.PageLive.Show, id: "show", session: %{"id" => id}) %>
     """
   end
 
@@ -28,6 +28,10 @@ defmodule WikiWeb.PageLive do
     ~H"""
     <%= live_render(@socket, WikiWeb.PageLive.New, id: "new") %>
     """
+  end
+
+  def mount(_params, %{"action" => :show, "id" => id}, socket) do
+    {:ok, assign(socket, action: :show, id: id)}
   end
 
   def mount(_params, %{"action" => action} = _session, socket) do

@@ -8,7 +8,7 @@ defmodule WikiWeb.PageLive.Show do
     """
   end
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, page: %{name: "Hello world!", content: "Test page"})}
+  def mount(_params, %{"id" => id} = _session, socket) do
+    {:ok, assign(socket, page: %{id: id, name: "Hello world!", content: "Test page"})}
   end
 end
