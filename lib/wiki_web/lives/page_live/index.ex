@@ -10,6 +10,9 @@ defmodule WikiWeb.PageLive.Index do
     """
   end
 
+  defp render_pages(%{pages: []}) do
+  end
+
   defp render_pages(assigns) do
     ~H"""
       <ul class="menu-list">
@@ -24,19 +27,19 @@ defmodule WikiWeb.PageLive.Index do
   defp render_page(assigns) do
     ~H"""
       <li>
-        <%= if @page.has_children do %>
-          <%= if @page.opened do %>
-            <span>▼</span>
-          <% else %>
+        <a>
+          <%= if @page.has_children and @page.children == [] do %>
             <span>►</span>
           <% end %>
-        <% else %>
-          <span>●</span>
-        <% end %>
-        <a><%= @page.name %></a>
-        <%= if @page.opened do %>
-          <%= render_pages(%{socket: @socket, pages: @page.children}) %>
-        <% else %>
+          <%= if @page.has_children and @page.children != [] do %>
+            <span>▼</span>
+          <% end %>
+          <%= if @page.has_children == false do %>
+            <span>●</span>
+          <% end %>
+            <%= @page.name %>
+          </a>
+        <%= render_pages(%{socket: @socket, pages: @page.children}) %>
       </li>
     """
   end
@@ -52,23 +55,22 @@ defmodule WikiWeb.PageLive.Index do
     pages
     |> Enum.filter(&(&1.parent_id == parent_id))
     |> Enum.map(&Map.put(&1, :children, []))
-    |> Enum.map(&Map.put(&1, :has_children, true))
     |> Enum.map(&Map.put(&1, :opened, true))
   end
 
   defp all_pages do
     [
-      %{id: 1, name: "Ch 1", parent_id: nil},
-      %{id: 2, name: "Ch 2", parent_id: nil},
-      %{id: 3, name: "Ch 3", parent_id: nil},
-      %{id: 4, name: "Ch 4", parent_id: nil},
-      %{id: 5, name: "Ch 5", parent_id: nil},
-      %{id: 6, name: "Ch 1-1", parent_id: 1},
-      %{id: 7, name: "Ch 1-2", parent_id: 1},
-      %{id: 8, name: "Ch 1-3", parent_id: 1},
-      %{id: 9, name: "Ch 1-2-1", parent_id: 7},
-      %{id: 10, name: "Ch 1-2-2", parent_id: 7},
-      %{id: 11, name: "Ch 3-1", parent_id: 7}
+      %{id: 1, name: "Ch 1", parent_id: nil, has_children: true},
+      %{id: 2, name: "Ch 2", parent_id: nil, has_children: false},
+      %{id: 3, name: "Ch 3", parent_id: nil, has_children: false},
+      %{id: 4, name: "Ch 4", parent_id: nil, has_children: false},
+      %{id: 5, name: "Ch 5", parent_id: nil, has_children: false},
+      %{id: 6, name: "Ch 1-1", parent_id: 1, has_children: false},
+      %{id: 7, name: "Ch 1-2", parent_id: 1, has_children: true},
+      %{id: 8, name: "Ch 1-3", parent_id: 1, has_children: false},
+      %{id: 9, name: "Ch 1-2-1", parent_id: 7, has_children: false},
+      %{id: 10, name: "Ch 1-2-2", parent_id: 7, has_children: false},
+      %{id: 11, name: "Ch 3-1", parent_id: 7, has_children: false}
     ]
   end
 end
