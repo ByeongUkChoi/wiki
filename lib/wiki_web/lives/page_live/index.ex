@@ -27,26 +27,26 @@ defmodule WikiWeb.PageLive.Index do
   defp render_page(assigns) do
     ~H"""
       <li>
-        <%= live_patch @page.name, to: Routes.page_path(@socket, :show, @page.id) %>
+        <%= live_patch render_index_button(%{socket: @socket, page: @page}),
+          to: Routes.page_path(@socket, :index, [page_id: @page.id]), style: "display: inline" %>
+        <%= live_patch @page.name, to: Routes.page_path(@socket, :show, @page.id), style: "display: inline" %>
         <%= render_pages(%{socket: @socket, pages: @page.children}) %>
       </li>
     """
+  end
 
-    # <li>
-    #   <a>
-    #     <%= if @page.has_children and @page.children == [] do %>
-    #       <span>►</span>
-    #     <% end %>
-    #     <%= if @page.has_children and @page.children != [] do %>
-    #       <span>▼</span>
-    #     <% end %>
-    #     <%= if @page.has_children == false do %>
-    #       <span>●</span>
-    #     <% end %>
-    #       <%= @page.name %>
-    #     </a>
-    #   <%= render_pages(%{socket: @socket, pages: @page.children}) %>
-    # </li>
+  defp render_index_button(assigns) do
+    ~H"""
+      <%= if @page.has_children and @page.children == [] do %>
+        <span>►</span>
+      <% end %>
+      <%= if @page.has_children and @page.children != [] do %>
+        <span>▼</span>
+      <% end %>
+      <%= if @page.has_children == false do %>
+        <span>●</span>
+      <% end %>
+    """
   end
 
   def mount(_params, _session, socket) do
