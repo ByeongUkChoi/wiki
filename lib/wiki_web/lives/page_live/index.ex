@@ -49,8 +49,15 @@ defmodule WikiWeb.PageLive.Index do
     """
   end
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, pages: get_pages(nil))}
+  def mount(_params, %{"id" => id} = _session, socket) do
+    pages = get_pages(nil)
+
+    # TODO: update childpage
+    # if id != nil do
+    #   children = get_pages(id)
+    # end
+
+    {:ok, assign(socket, pages: pages)}
   end
 
   # test data
@@ -65,17 +72,17 @@ defmodule WikiWeb.PageLive.Index do
 
   defp all_pages do
     [
-      %{id: 1, name: "Ch 1", parent_id: nil, has_children: true},
-      %{id: 2, name: "Ch 2", parent_id: nil, has_children: false},
-      %{id: 3, name: "Ch 3", parent_id: nil, has_children: false},
-      %{id: 4, name: "Ch 4", parent_id: nil, has_children: false},
-      %{id: 5, name: "Ch 5", parent_id: nil, has_children: false},
-      %{id: 6, name: "Ch 1-1", parent_id: 1, has_children: false},
-      %{id: 7, name: "Ch 1-2", parent_id: 1, has_children: true},
-      %{id: 8, name: "Ch 1-3", parent_id: 1, has_children: false},
-      %{id: 9, name: "Ch 1-2-1", parent_id: 7, has_children: false},
-      %{id: 10, name: "Ch 1-2-2", parent_id: 7, has_children: false},
-      %{id: 11, name: "Ch 3-1", parent_id: 7, has_children: false}
+      %{id: 1, name: "Ch 1", parent_id: nil, has_children: true, children: []},
+      %{id: 2, name: "Ch 2", parent_id: nil, has_children: false, children: []},
+      %{id: 3, name: "Ch 3", parent_id: nil, has_children: false, children: []},
+      %{id: 4, name: "Ch 4", parent_id: nil, has_children: false, children: []},
+      %{id: 5, name: "Ch 5", parent_id: nil, has_children: false, children: []},
+      %{id: 6, name: "Ch 1-1", parent_id: 1, has_children: false, children: []},
+      %{id: 7, name: "Ch 1-2", parent_id: 1, has_children: true, children: []},
+      %{id: 8, name: "Ch 1-3", parent_id: 1, has_children: false, children: []},
+      %{id: 9, name: "Ch 1-2-1", parent_id: 7, has_children: false, children: []},
+      %{id: 10, name: "Ch 1-2-2", parent_id: 7, has_children: false, children: []},
+      %{id: 11, name: "Ch 3-1", parent_id: 7, has_children: false, children: []}
     ]
   end
 end

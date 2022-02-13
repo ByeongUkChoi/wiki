@@ -2,9 +2,11 @@ defmodule WikiWeb.PageLive do
   use WikiWeb, :live_view
 
   def render(assigns) do
+    id = Map.get(assigns, :id)
+
     ~H"""
     <div style="width:25%">
-      <%= live_render(@socket, WikiWeb.PageLive.Index, id: "index") %>
+      <%= live_render(@socket, WikiWeb.PageLive.Index, id: "index", session: %{"id" => id}) %>
     </div>
     <div style="margin-left:25%">
       <%= render(@action, assigns) %>
