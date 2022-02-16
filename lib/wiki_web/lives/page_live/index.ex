@@ -42,7 +42,7 @@ defmodule WikiWeb.PageLive.Index do
         <span phx-click={JS.push("show_children", value: %{id: @page.id})}>►</span>
       <% end %>
       <%= if @page.has_children and @page.children != [] do %>
-        <span>▼</span>
+        <span phx-click={JS.push("hide_children", value: %{id: @page.id})}>▼</span>
       <% end %>
       <%= if @page.has_children == false do %>
         <span>●</span>
@@ -50,9 +50,14 @@ defmodule WikiWeb.PageLive.Index do
     """
   end
 
-  def handle_event("show_children", %{"id" => page_id}, socket) do
-    pages = get_pages(nil)
+  def handle_event("show_children", %{"id" => page_id}, %{assigns: %{pages: pages}} = socket) do
     pages = append_children(pages, page_id)
+
+    {:noreply, assign(socket, pages: pages)}
+  end
+
+  def handle_event("hide_children", %{"id" => page_id}, %{assigns: %{pages: pages}} = socket) do
+    pages = remove_children(pages, page_id)
 
     {:noreply, assign(socket, pages: pages)}
   end
@@ -72,6 +77,15 @@ defmodule WikiWeb.PageLive.Index do
     Enum.map(pages, fn page ->
       case page do
         %{id: ^id} -> Map.put(page, :children, get_pages(id))
+        _ -> page
+      end
+    end)
+  end
+
+  defp remove_children(pages, id) do
+    Enum.map(pages, fn page ->
+      case page do
+        %{id: ^id} -> Map.put(page, :children, [])
         _ -> page
       end
     end)
