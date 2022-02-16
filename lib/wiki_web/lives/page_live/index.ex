@@ -1,6 +1,8 @@
 defmodule WikiWeb.PageLive.Index do
   use WikiWeb, :live_view
 
+  alias Phoenix.LiveView.JS
+
   def render(assigns) do
     ~H"""
     <aside class="menu">
@@ -27,8 +29,7 @@ defmodule WikiWeb.PageLive.Index do
   defp render_page(assigns) do
     ~H"""
       <li>
-        <%= live_patch render_index_button(%{socket: @socket, page: @page}),
-          to: Routes.page_path(@socket, :index, page_id: @page.id), style: "display: inline" %>
+        <%= render_index_button(%{socket: @socket, page: @page}) %>
         <%= live_patch @page.name, to: Routes.page_path(@socket, :show, @page.id), style: "display: inline" %>
         <%= render_pages(%{socket: @socket, pages: @page.children}) %>
       </li>
@@ -38,7 +39,7 @@ defmodule WikiWeb.PageLive.Index do
   defp render_index_button(assigns) do
     ~H"""
       <%= if @page.has_children and @page.children == [] do %>
-        <span>►</span>
+        <span phx-click={JS.push("show_children", value: %{id: @page.id})}>►</span>
       <% end %>
       <%= if @page.has_children and @page.children != [] do %>
         <span>▼</span>
@@ -47,6 +48,13 @@ defmodule WikiWeb.PageLive.Index do
         <span>●</span>
       <% end %>
     """
+  end
+
+  def handle_event("show_children", %{"id" => page_id}, socket) do
+    pages = get_pages(nil)
+    pages = append_children(pages, page_id)
+
+    {:noreply, assign(socket, pages: pages)}
   end
 
   def mount(_params, %{"id" => id} = _session, socket) do
