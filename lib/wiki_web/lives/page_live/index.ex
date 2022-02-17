@@ -30,7 +30,7 @@ defmodule WikiWeb.PageLive.Index do
     ~H"""
       <li>
         <%= render_index_button(%{socket: @socket, page: @page}) %>
-        <%= live_patch @page.name, to: Routes.page_path(@socket, :show, @page.id), style: "display: inline" %>
+        <%= live_patch @page.name, to: Routes.page_path(@socket, :index), style: "display: inline" %>
         <%= render_pages(%{socket: @socket, pages: @page.children}) %>
       </li>
     """
@@ -51,6 +51,7 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def handle_event("show_children", %{"id" => page_id}, %{assigns: %{pages: pages}} = socket) do
+    IO.inspect(123)
     pages = append_children(pages, page_id)
 
     {:noreply, assign(socket, pages: pages)}

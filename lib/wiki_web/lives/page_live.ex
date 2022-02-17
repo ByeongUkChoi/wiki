@@ -39,4 +39,9 @@ defmodule WikiWeb.PageLive do
   def mount(_params, %{"action" => action} = _session, socket) do
     {:ok, assign(socket, action: action)}
   end
+
+  def mount(_params, session, socket) do
+    IO.inspect(session)
+    {:ok, assign(socket, action: :main)}
+  end
 end
