@@ -27,10 +27,11 @@ defmodule WikiWeb.PageLive.Index do
 
   # ▼ ► ●
   defp render_page(assigns) do
+    # <%= live_patch @page.name, to: Routes.page_path(@socket, :index), style: "display: inline" %>
     ~H"""
       <li>
         <%= render_index_button(%{socket: @socket, page: @page}) %>
-        <%= live_patch @page.name, to: Routes.page_path(@socket, :index), style: "display: inline" %>
+        <span phx-click={JS.push("show_children", value: %{id: @page.id, parent_id: @page.parent_id})}><%= @page.name %></span>
         <%= render_pages(%{socket: @socket, pages: @page.children}) %>
       </li>
     """
@@ -39,10 +40,10 @@ defmodule WikiWeb.PageLive.Index do
   defp render_index_button(assigns) do
     ~H"""
       <%= if @page.has_children and @page.children == [] do %>
-        <span phx-click={JS.push("show_children", value: %{id: @page.id})}>►</span>
+        <span phx-click={JS.push("show_children", value: %{id: @page.id, parent_id: @page.parent_id})}>►</span>
       <% end %>
       <%= if @page.has_children and @page.children != [] do %>
-        <span phx-click={JS.push("hide_children", value: %{id: @page.id})}>▼</span>
+        <span phx-click={JS.push("hide_children", value: %{id: @page.id, parent_id: @page.parent_id})}>▼</span>
       <% end %>
       <%= if @page.has_children == false do %>
         <span>●</span>
@@ -50,9 +51,13 @@ defmodule WikiWeb.PageLive.Index do
     """
   end
 
-  def handle_event("show_children", %{"id" => page_id}, %{assigns: %{pages: pages}} = socket) do
-    IO.inspect(123)
-    pages = append_children(pages, page_id)
+  def handle_event(
+        "show_children",
+        %{"id" => page_id, "parent_id" => parent_id},
+        %{assigns: %{pages: pages}} = socket
+      ) do
+    IO.inspect("page_id=#{page_id}")
+    pages = append_children(pages, page_id, parent_id)
 
     {:noreply, assign(socket, pages: pages)}
   end
@@ -65,20 +70,32 @@ defmodule WikiWeb.PageLive.Index do
 
   def mount(_params, %{"id" => id} = _session, socket) do
     pages = get_pages(nil)
-    pages = append_children(pages, id)
+    pages = append_children(pages, id, nil)
 
     {:ok, assign(socket, pages: pages)}
   end
 
-  defp append_children(pages, nil) do
+  defp append_children(pages, nil, nil) do
     pages
   end
 
-  defp append_children(pages, id) do
+  defp append_children(pages, id, nil) do
     Enum.map(pages, fn page ->
       case page do
         %{id: ^id} -> Map.put(page, :children, get_pages(id))
         _ -> page
+      end
+    end)
+  end
+
+  defp append_children(pages, id, parent_id) do
+    Enum.map(pages, fn page ->
+      case page do
+        %{id: ^parent_id, children: children} ->
+          page |> Map.put(:children, append_children(children, id, nil))
+
+        _ ->
+          page
       end
     end)
   end
