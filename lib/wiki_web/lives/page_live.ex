@@ -1,6 +1,10 @@
 defmodule WikiWeb.PageLive do
   use WikiWeb, :live_view
 
+  def mount(_params, session, socket) do
+    {:ok, assign(socket, action: :main)}
+  end
+
   def render(assigns) do
     id = Map.get(assigns, :id)
 
@@ -32,16 +36,7 @@ defmodule WikiWeb.PageLive do
     """
   end
 
-  def mount(_params, %{"action" => :show, "id" => id}, socket) do
-    {:ok, assign(socket, action: :show, id: id)}
-  end
-
-  def mount(_params, %{"action" => action} = _session, socket) do
-    {:ok, assign(socket, action: action)}
-  end
-
-  def mount(_params, session, socket) do
-    IO.inspect(session)
-    {:ok, assign(socket, action: :main)}
+  def handle_params(_params, _url, socket) when socket.assigns.live_action == :new do
+    {:noreply, assign(socket, [])}
   end
 end
