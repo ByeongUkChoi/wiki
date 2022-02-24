@@ -20,6 +20,7 @@ defmodule Wiki.Application do
       # Start a worker by calling: Wiki.Worker.start_link(arg)
       # {Wiki.Worker, arg}
       # data store
+      {Wiki.PageStore.GenServerImpl, %{}},
       {Wiki.DocumentStore.GenServerImpl, %{}},
       {Wiki.ProjectStore.GenServerImpl, %{}}
     ]
