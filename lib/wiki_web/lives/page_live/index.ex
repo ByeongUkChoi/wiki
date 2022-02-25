@@ -3,6 +3,8 @@ defmodule WikiWeb.PageLive.Index do
 
   alias Phoenix.LiveView.JS
 
+  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
+
   def render(assigns) do
     ~H"""
     <aside class="menu">
@@ -111,7 +113,7 @@ defmodule WikiWeb.PageLive.Index do
 
   # test data
   defp get_pages(parent_id) do
-    pages = all_pages()
+    pages = @page_store.fetch_all(page_num: 1, per_page: 1000)
 
     pages
     |> Enum.filter(&(&1.parent_id == parent_id))
