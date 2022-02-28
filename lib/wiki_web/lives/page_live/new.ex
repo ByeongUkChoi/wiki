@@ -1,6 +1,8 @@
 defmodule WikiWeb.PageLive.New do
   use WikiWeb, :live_view
 
+  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
+
   def render(assigns) do
     ~H"""
     <div class="field">
@@ -30,5 +32,14 @@ defmodule WikiWeb.PageLive.New do
 
   def mount(_params, _session, socket) do
     {:ok, assign(socket, [])}
+  end
+
+  def handle_event("save", %{"page" => %{"title" => title, "content" => content}}, socket) do
+    with {:ok, %{id: page_id}} <- @page_store.create(title: title, content: content) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "page created")
+       |> push_redirect(to: Routes.page_new_path(socket, :new, page_id))}
+    end
   end
 end
