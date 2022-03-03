@@ -10,7 +10,7 @@ defmodule WikiWeb.PageLive.Show do
     """
   end
 
-  def mount(_params, %{"id" => id} = _session, socket) do
+  def mount(%{"id" => id} = _params, _session, socket) do
     with id <- String.to_integer(id),
          {:ok, page} <- @page_store.fetch_by_id(id) do
       {:ok, assign(socket, page: Map.from_struct(page))}

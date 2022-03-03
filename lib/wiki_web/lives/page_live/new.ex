@@ -39,7 +39,7 @@ defmodule WikiWeb.PageLive.New do
       {:noreply,
        socket
        |> put_flash(:info, "page created")
-       |> push_redirect(to: Routes.page_new_path(socket, :new, page_id))}
+       |> push_redirect(to: Routes.page_show_path(socket, :show, page_id))}
     end
   end
 end
