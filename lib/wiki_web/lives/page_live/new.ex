@@ -1,37 +1,32 @@
 defmodule WikiWeb.PageLive.New do
   use WikiWeb, :live_view
 
+  import Ecto.Changeset
+
+  alias Wiki.PageStore.Page
+
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
 
   def render(assigns) do
     ~H"""
-    <div class="field">
-      <label class="label">Title</label>
-      <div class="control">
-        <input class="input" type="text" placeholder="Text input">
-      </div>
-    </div>
+    <.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
+      <%= label f, :title %>
+      <%= text_input f, :title, phx_debounce: "blur" %>
+      <%= error_tag f, :title %>
 
-    <div class="field">
-      <label class="label">Content</label>
-      <div class="control">
-        <textarea class="textarea" placeholder="Textarea"></textarea>
-      </div>
-    </div>
+      <%= label f, :content %>
+      <%= textarea f, :content, phx_debounce: "blur" %>
+      <%= error_tag f, :content %>
 
-    <div class="field is-grouped">
-      <div class="control">
-        <button class="button is-link">Submit</button>
+      <div>
+        <%= submit "Post", phx_disable_with: "Posting..." %>
       </div>
-      <div class="control">
-        <button class="button is-link is-light">Cancel</button>
-      </div>
-    </div>
+    </.form>
     """
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, [])}
+    {:ok, assign(socket, changeset: change(%Page{}))}
   end
 
   def handle_event("save", %{"page" => %{"title" => title, "content" => content}}, socket) do
