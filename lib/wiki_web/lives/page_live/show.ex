@@ -5,7 +5,7 @@ defmodule WikiWeb.PageLive.Show do
 
   def render(assigns) do
     ~H"""
-      <h2><%= @page.name %></h2>
+      <h2><%= @page.title %></h2>
       <p><%= @page.content %></p>
     """
   end
@@ -14,7 +14,6 @@ defmodule WikiWeb.PageLive.Show do
     with id <- String.to_integer(id),
          {:ok, page} <- @page_store.fetch_by_id(id) do
       {:ok, assign(socket, page: Map.from_struct(page))}
-      # {:ok, assign(socket, page: %{id: id, name: "Hello world!", content: "Test page"})}
     end
   end
 end
