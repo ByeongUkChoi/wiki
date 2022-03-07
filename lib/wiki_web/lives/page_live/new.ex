@@ -37,4 +37,22 @@ defmodule WikiWeb.PageLive.New do
        |> push_redirect(to: Routes.page_show_path(socket, :show, page_id))}
     end
   end
+
+  def handle_event("validate", %{"page" => page}, socket) do
+    changeset =
+      %Page{}
+      |> Page.changeset(page)
+      |> Map.put(:action, :insert)
+
+    {:noreply, assign(socket, changeset: changeset)}
+  end
+
+  def handle_event("save", %{"page" => %{"title" => title, "content" => content}}, socket) do
+    with {:ok, %{id: page_id}} <- @page_store.create(title: title, content: content) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "page created")
+       |> push_redirect(to: Routes.page_show_path(socket, :show, page_id))}
+    end
+  end
 end
