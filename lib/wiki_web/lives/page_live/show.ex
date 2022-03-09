@@ -7,6 +7,7 @@ defmodule WikiWeb.PageLive.Show do
     ~H"""
       <h2><%= @page.title %></h2>
       <p><%= @page.content %></p>
+      <button><%= live_redirect "Edit", to: Routes.page_edit_path(@socket, :edit, @page.id) %></button>
     """
   end
 

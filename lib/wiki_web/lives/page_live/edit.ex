@@ -25,8 +25,12 @@ defmodule WikiWeb.PageLive.Edit do
     """
   end
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, changeset: change(%Page{}))}
+  def mount(%{"id" => id} = _params, _session, socket) do
+    with id <- String.to_integer(id),
+         {:ok, page} <- @page_store.fetch_by_id(id) do
+      changeset = page |> Page.changeset(%{}) |> Map.put(:action, :update)
+      {:ok, assign(socket, page: page, changeset: changeset)}
+    end
   end
 
   def handle_event("validate", %{"page" => page}, socket) do
