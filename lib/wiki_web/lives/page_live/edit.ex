@@ -1,8 +1,6 @@
 defmodule WikiWeb.PageLive.Edit do
   use WikiWeb, :live_view
 
-  import Ecto.Changeset
-
   alias Wiki.PageStore.Page
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
