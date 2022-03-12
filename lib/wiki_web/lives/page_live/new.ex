@@ -10,16 +10,26 @@ defmodule WikiWeb.PageLive.New do
   def render(assigns) do
     ~H"""
     <.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
-      <%= label f, :title %>
-      <%= text_input f, :title, phx_debounce: "blur" %>
-      <%= error_tag f, :title %>
+      <div class="field">
+        <%= label f, :title, class: "label" %>
+        <div class="control">
+            <%= text_input f, :title, phx_debounce: "blur", class: "input" %>
+            <%= error_tag f, :title %>
+        </div>
+      </div>
 
-      <%= label f, :content %>
-      <%= textarea f, :content, phx_debounce: "blur" %>
-      <%= error_tag f, :content %>
+      <div class="field">
+        <%= label f, :content, class: "label" %>
+        <div class="control">
+          <%= textarea f, :content, phx_debounce: "blur", class: "textarea" %>
+          <%= error_tag f, :content %>
+        </div>
+      </div>
 
-      <div>
-        <%= submit "Post", phx_disable_with: "Posting..." %>
+      <div class="field is-grouped">
+        <div class="control">
+          <%= submit "Post", phx_disable_with: "Posting...", class: ["button", "is-link"] %>
+        </div>
       </div>
     </.form>
     """
