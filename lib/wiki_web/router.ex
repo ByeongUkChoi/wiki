@@ -19,6 +19,7 @@ defmodule WikiWeb.Router do
 
     # get "/", PageController, :index
     # get "/pages/new", PageController, :new
+    live "/", PageLive.Index, :index
     live "/new", PageLive.New, :new
     live "/:id", PageLive.Show, :show
     live "/:id/edit", PageLive.Edit, :edit
