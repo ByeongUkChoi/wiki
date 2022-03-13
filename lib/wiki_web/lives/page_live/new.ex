@@ -18,7 +18,6 @@ defmodule WikiWeb.PageLive.New do
               <%= error_tag f, :title %>
           </div>
         </div>
-
         <div class="field">
           <%= label f, :content, class: "label" %>
           <div class="control">
@@ -26,7 +25,6 @@ defmodule WikiWeb.PageLive.New do
             <%= error_tag f, :content %>
           </div>
         </div>
-
         <div class="field is-grouped">
           <div class="control">
             <%= submit "Post", phx_disable_with: "Posting...", class: ["button", "is-link"] %>
