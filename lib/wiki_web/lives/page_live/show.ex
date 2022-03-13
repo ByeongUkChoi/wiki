@@ -5,10 +5,14 @@ defmodule WikiWeb.PageLive.Show do
 
   def render(assigns) do
     ~H"""
-      <h2><%= @page.title %></h2>
-      <p><%= @page.content %></p>
-      <button><%= live_redirect "Edit", to: Routes.page_edit_path(@socket, :edit, @page.id) %></button>
-      <button phx-click="delete">delete</button>
+    <div class="container">
+      <h2 class="title"><%= @page.title %></h2>
+      <div class="content"><%= @page.content %></div>
+      <div class="buttons">
+        <button class="button is-primary is-light"><%= live_redirect "Edit", to: Routes.page_edit_path(@socket, :edit, @page.id) %></button>
+        <button class="button is-danger is-light" phx-click="delete">Delete</button>
+      </div>
+    </div>
     """
   end
 

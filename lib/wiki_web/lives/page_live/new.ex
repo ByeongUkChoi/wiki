@@ -9,29 +9,31 @@ defmodule WikiWeb.PageLive.New do
 
   def render(assigns) do
     ~H"""
-    <.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
-      <div class="field">
-        <%= label f, :title, class: "label" %>
-        <div class="control">
-            <%= text_input f, :title, phx_debounce: "blur", class: "input" %>
-            <%= error_tag f, :title %>
+    <div class="container">
+      <.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
+        <div class="field">
+          <%= label f, :title, class: "label" %>
+          <div class="control">
+              <%= text_input f, :title, phx_debounce: "blur", class: "input" %>
+              <%= error_tag f, :title %>
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <%= label f, :content, class: "label" %>
-        <div class="control">
-          <%= textarea f, :content, phx_debounce: "blur", class: "textarea" %>
-          <%= error_tag f, :content %>
+        <div class="field">
+          <%= label f, :content, class: "label" %>
+          <div class="control">
+            <%= textarea f, :content, phx_debounce: "blur", class: "textarea" %>
+            <%= error_tag f, :content %>
+          </div>
         </div>
-      </div>
 
-      <div class="field is-grouped">
-        <div class="control">
-          <%= submit "Post", phx_disable_with: "Posting...", class: ["button", "is-link"] %>
+        <div class="field is-grouped">
+          <div class="control">
+            <%= submit "Post", phx_disable_with: "Posting...", class: ["button", "is-link"] %>
+          </div>
         </div>
-      </div>
-    </.form>
+      </.form>
+    </div>
     """
   end
 
