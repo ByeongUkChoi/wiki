@@ -9,7 +9,7 @@ defmodule WikiWeb.PageLive.Index do
       <p class="menu-label">Pages</p>
       <ul class="menu-list">
         <%= for page <- @pages do %>
-          <%= page.title %>
+          <li><%= link page.title, to: Routes.page_show_path(@socket, :show, page.id) %></li>
         <% end %>
       </ul>
     </aside>

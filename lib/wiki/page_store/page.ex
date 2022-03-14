@@ -7,6 +7,7 @@ defmodule Wiki.PageStore.Page do
           id: id,
           title: String.t(),
           content: String.t(),
+          parent_id: id,
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
@@ -14,6 +15,7 @@ defmodule Wiki.PageStore.Page do
   schema "pages" do
     field :title, :string
     field :content, :string
+    field :parent_id, :integer
 
     timestamps()
   end
@@ -21,8 +23,8 @@ defmodule Wiki.PageStore.Page do
   @doc false
   def changeset(document, attrs) do
     document
-    |> cast(attrs, [:title, :content])
-    |> validate_required([:title, :content])
+    |> cast(attrs, [:title, :content, :parent_id])
+    |> validate_required([:title, :content, :parent_id])
     |> validate_length(:title, max: 255)
   end
 end
