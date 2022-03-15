@@ -11,6 +11,7 @@ defmodule WikiWeb.PageLive.New do
     ~H"""
     <div class="container">
       <.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
+        <%= hidden_input f, :parent_id, value: @parent_id %>
         <div class="field">
           <%= label f, :title, class: "label" %>
           <div class="control">
@@ -35,8 +36,8 @@ defmodule WikiWeb.PageLive.New do
     """
   end
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, changeset: change(%Page{}))}
+  def mount(params, _session, socket) do
+    {:ok, assign(socket, changeset: change(%Page{}), parent_id: params["parent_id"])}
   end
 
   def handle_event("validate", %{"page" => page}, socket) do
@@ -48,12 +49,29 @@ defmodule WikiWeb.PageLive.New do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  def handle_event("save", %{"page" => %{"title" => title, "content" => content}}, socket) do
-    with {:ok, %{id: page_id}} <- @page_store.create(title: title, content: content) do
+  def handle_event(
+        "save",
+        %{"page" => %{"title" => title, "content" => content, "parent_id" => parent_id}},
+        socket
+      ) do
+    with {:ok, %{id: page_id}} <-
+           @page_store.create(title: title, content: content, parent_id: parse_integer(parent_id)) do
       {:noreply,
        socket
        |> put_flash(:info, "page created")
        |> push_redirect(to: Routes.page_show_path(socket, :show, page_id))}
+    end
+  end
+
+  defp parse_integer(nil), do: nil
+  defp parse_integer(""), do: nil
+  defp parse_integer(int) when is_integer(int), do: int
+
+  defp parse_integer(str) when is_binary(str) do
+    Integer.parse(str)
+    |> case do
+      {int, _} -> int
+      _ -> nil
     end
   end
 end

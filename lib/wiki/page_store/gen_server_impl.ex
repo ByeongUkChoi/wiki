@@ -38,9 +38,13 @@ defmodule Wiki.PageStore.GenServerImpl do
   def get_total_count, do: GenServer.call(__MODULE__, {:get_total_count})
 
   @impl true
-  def create(title: title, content: content) do
+  def create(title: title, content: content, parent_id: parent_id) do
     id = next_id()
-    GenServer.cast(__MODULE__, {:create, id, %{title: title, content: content}})
+
+    GenServer.cast(
+      __MODULE__,
+      {:create, id, %{title: title, content: content, parent_id: parent_id}}
+    )
 
     with page when is_map(page) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
       {:ok, struct(Page, page)}

@@ -10,6 +10,7 @@ defmodule WikiWeb.PageLive.Show do
       <div class="content"><%= @page.content %></div>
       <div class="buttons">
         <button class="button is-primary is-light"><%= live_redirect "Edit", to: Routes.page_edit_path(@socket, :edit, @page.id) %></button>
+        <button class="button is-info is-light"><%= live_redirect "Create sub page", to: Routes.page_new_path(@socket, :new, parent_id: @page.id) %></button>
         <button class="button is-danger is-light" phx-click="delete">Delete</button>
       </div>
     </div>
