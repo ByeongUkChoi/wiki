@@ -8,10 +8,23 @@ defmodule WikiWeb.PageLive.New do
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
 
   def render(assigns) do
+    {parent_id, parent_title} =
+      case assigns do
+        %{parent: nil} -> {nil, nil}
+        %{parent: page} -> {page.id, page.title}
+      end
+
     ~H"""
     <div class="container">
+      <%= if parent_id do %>
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><%= live_redirect parent_title, to: Routes.page_show_path(@socket, :show, parent_id) %></li>
+          </ul>
+        </nav>
+      <% end %>
       <.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
-        <%= hidden_input f, :parent_id, value: @parent_id %>
+        <%= hidden_input f, :parent_id, value: parent_id %>
         <div class="field">
           <%= label f, :title, class: "label" %>
           <div class="control">
@@ -37,7 +50,20 @@ defmodule WikiWeb.PageLive.New do
   end
 
   def mount(params, _session, socket) do
-    {:ok, assign(socket, changeset: change(%Page{}), parent_id: params["parent_id"])}
+    parent_page = params["parent_id"] |> parse_integer() |> get_page()
+    {:ok, assign(socket, changeset: change(%Page{}), parent: parent_page)}
+  end
+
+  defp get_page(nil) do
+    nil
+  end
+
+  defp get_page(id) do
+    @page_store.fetch_by_id(id)
+    |> case do
+      {:ok, page} -> page
+      _ -> nil
+    end
   end
 
   def handle_event("validate", %{"page" => page}, socket) do
