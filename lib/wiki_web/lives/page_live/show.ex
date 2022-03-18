@@ -4,8 +4,21 @@ defmodule WikiWeb.PageLive.Show do
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
 
   def render(assigns) do
+    {parent_id, parent_title} =
+      case assigns do
+        %{parent: nil} -> {nil, nil}
+        %{parent: page} -> {page.id, page.title}
+      end
+
     ~H"""
     <div class="container">
+      <%= if parent_id do %>
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+          <ul>
+            <li><%= live_redirect parent_title, to: Routes.page_show_path(@socket, :show, parent_id) %></li>
+          </ul>
+        </nav>
+      <% end %>
       <h2 class="title"><%= @page.title %></h2>
       <div class="content"><%= @page.content %></div>
       <div class="buttons">
@@ -20,7 +33,20 @@ defmodule WikiWeb.PageLive.Show do
   def mount(%{"id" => id} = _params, _session, socket) do
     with id <- String.to_integer(id),
          {:ok, page} <- @page_store.fetch_by_id(id) do
-      {:ok, assign(socket, page: Map.from_struct(page))}
+      parent_page = get_parent_page(page)
+      {:ok, assign(socket, page: Map.from_struct(page), parent: parent_page)}
+    end
+  end
+
+  defp get_parent_page(%{parent_id: nil}) do
+    nil
+  end
+
+  defp get_parent_page(%{parent_id: parent_id}) do
+    @page_store.fetch_by_id(parent_id)
+    |> case do
+      {:ok, page} -> page
+      _ -> nil
     end
   end
 
