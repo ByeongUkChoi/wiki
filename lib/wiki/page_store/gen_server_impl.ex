@@ -9,7 +9,9 @@ defmodule Wiki.PageStore.GenServerImpl do
 
   # client api
   def start_link(init_param) do
-    GenServer.start_link(__MODULE__, init_param, name: __MODULE__, debug: [:trace])
+    {:ok, pid} = GenServer.start_link(__MODULE__, init_param, name: __MODULE__, debug: [:trace])
+    :sys.no_debug(pid)
+    {:ok, pid}
   end
 
   @impl true

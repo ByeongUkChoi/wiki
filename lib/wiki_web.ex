@@ -47,6 +47,8 @@ defmodule WikiWeb do
       use Phoenix.LiveView,
         layout: {WikiWeb.LayoutView, "live.html"}
 
+      use LifeCycleHook
+
       unquote(view_helpers())
     end
   end
