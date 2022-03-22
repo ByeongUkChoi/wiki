@@ -1,17 +1,15 @@
 defmodule WikiWeb.PageLive.Index do
   use WikiWeb, :live_view
 
+  alias WikiWeb.PageLive.IndexComponent
+
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
 
   def render(assigns) do
     ~H"""
     <aside class="menu">
       <p class="menu-label">Pages</p>
-      <ul class="menu-list">
-        <%= for page <- @pages do %>
-          <li><%= link page.title, to: Routes.page_show_path(@socket, :show, page.id) %></li>
-        <% end %>
-      </ul>
+      <.live_component module={IndexComponent} id="index" pages={@pages} />
     </aside>
     """
   end
