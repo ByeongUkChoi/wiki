@@ -1,18 +1,14 @@
 defmodule WikiWeb.PageLive.Show do
   use WikiWeb, :live_view
 
+  alias WikiWeb.PageLive.AncestorNavComponent
+
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
 
   def render(assigns) do
     ~H"""
     <div class="container">
-      <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-          <%= for ancestor <- @ancestors do %>
-            <li><%= link ancestor.title, to: Routes.page_show_path(@socket, :show, ancestor.id) %></li>
-          <% end %>
-        </ul>
-      </nav>
+      <.live_component module={AncestorNavComponent} id="ancestors" ancestors={@ancestors} />
       <h2 class="title"><%= @page.title %></h2>
       <div class="content"><%= @page.content %></div>
       <div class="buttons">

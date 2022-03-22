@@ -3,6 +3,7 @@ defmodule WikiWeb.PageLive.New do
 
   import Ecto.Changeset
 
+  alias WikiWeb.PageLive.AncestorNavComponent
   alias Wiki.PageStore.Page
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
@@ -10,13 +11,7 @@ defmodule WikiWeb.PageLive.New do
   def render(assigns) do
     ~H"""
     <div class="container">
-      <nav class="breadcrumb" aria-label="breadcrumbs">
-        <ul>
-          <%= for ancestor <- @ancestors do %>
-            <li><%= link ancestor.title, to: Routes.page_show_path(@socket, :show, ancestor.id) %></li>
-          <% end %>
-        </ul>
-      </nav>
+      <.live_component module={AncestorNavComponent} id="ancestors" ancestors={@ancestors} />
       <.form let={f} for={@changeset} phx-change="validate" phx-submit="save">
         <%= hidden_input f, :parent_id, value: @parent_id %>
         <div class="field">
