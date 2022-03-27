@@ -8,7 +8,8 @@ defmodule Wiki.PageStore do
   @type per_page :: integer()
 
   @callback fetch_by_id(Page.id()) :: {:ok, Page.t()} | {:error, :not_found}
-  @callback fetch_all(parent_id: parent_id, page_num: page_num, per_page: per_page) :: list(PageIndex.t())
+  @callback fetch_all(parent_id: parent_id, page_num: page_num, per_page: per_page) ::
+              list(PageIndex.t())
   @callback fetch_all(page_num: page_num, per_page: per_page) :: list(Page.t())
   @callback get_total_count() :: integer()
 

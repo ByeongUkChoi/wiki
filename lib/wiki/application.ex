@@ -9,18 +9,17 @@ defmodule Wiki.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      # TODO: disable repo
-      # Wiki.Repo,
+      Wiki.Repo,
       # Start the Telemetry supervisor
       WikiWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Wiki.PubSub},
       # Start the Endpoint (http/https)
-      WikiWeb.Endpoint,
+      WikiWeb.Endpoint
       # Start a worker by calling: Wiki.Worker.start_link(arg)
       # {Wiki.Worker, arg}
       # data store
-      {Wiki.PageStore.GenServerImpl, %{}}
+      # {Wiki.PageStore.GenServerImpl, %{}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
