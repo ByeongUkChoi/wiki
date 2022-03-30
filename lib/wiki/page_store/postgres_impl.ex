@@ -4,7 +4,7 @@ defmodule Wiki.PageStore.PostgreImpl do
   alias Wiki.Repo
   alias Wiki.PageStore.Page
 
-  import Ecto.Query
+  import Ecto.{Query, Changeset}
 
   @behaviour Wiki.PageStore
 
@@ -19,8 +19,11 @@ defmodule Wiki.PageStore.PostgreImpl do
 
   @impl true
   def fetch_all(parent_id: parent_id, page_num: page_num, per_page: per_page) do
-
-    from(p in Page, where: p.parent_id == ^parent_id, limit: ^per_page, offset: ^((page_num - 1) * per_page))
+    from(p in Page,
+      where: p.parent_id == ^parent_id,
+      limit: ^per_page,
+      offset: ^((page_num - 1) * per_page)
+    )
     |> Repo.all()
   end
 
@@ -41,6 +44,17 @@ defmodule Wiki.PageStore.PostgreImpl do
     |> case do
       {:ok, page} -> {:ok, page}
       {:error, _changeset} -> {:ok, :failed_create}
+    end
+  end
+
+  @impl true
+  def update(id, title: title, content: content) do
+    %Page{id: id}
+    |> change(title: title, content: content)
+    |> Repo.update()
+    |> case do
+      {:ok, page} -> {:ok, page}
+      {:error, _changeset} -> {:ok, :failed_update}
     end
   end
 end

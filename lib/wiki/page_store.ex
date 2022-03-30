@@ -15,6 +15,7 @@ defmodule Wiki.PageStore do
 
   @callback create(title: String.t(), content: String.t(), parent_id: Page.id()) ::
               {:ok, Page.t()} | {:error, :failed_create}
-  @callback update(Page.t()) :: {:ok, Page.t()} | {:error, :failed_update}
+  @callback update(Page.id(), title: String.t(), content: String.t()) ::
+              {:ok, Page.t()} | {:error, :failed_update}
   @callback delete_by_id(Page.id()) :: :ok | :not_found
 end
