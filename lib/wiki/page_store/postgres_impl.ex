@@ -57,4 +57,14 @@ defmodule Wiki.PageStore.PostgreImpl do
       {:error, _changeset} -> {:ok, :failed_update}
     end
   end
+
+  @impl true
+  def delete_by_id(id) do
+    %Page{id: id}
+    |> Repo.delete()
+    |> case do
+      {:ok, _struct}       -> :ok
+      {:error, _} -> :not_found
+    end
+  end
 end
