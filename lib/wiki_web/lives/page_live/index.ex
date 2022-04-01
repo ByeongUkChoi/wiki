@@ -3,7 +3,7 @@ defmodule WikiWeb.PageLive.Index do
 
   alias WikiWeb.PageLive.IndexComponent
 
-  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
+  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
   def render(assigns) do
     ~H"""

@@ -3,7 +3,7 @@ defmodule WikiWeb.PageLive.Show do
 
   alias WikiWeb.PageLive.AncestorNavComponent
 
-  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.GenServerImpl)
+  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
   def render(assigns) do
     ~H"""
