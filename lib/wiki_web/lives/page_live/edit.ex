@@ -50,14 +50,16 @@ defmodule WikiWeb.PageLive.Edit do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  def handle_event("save", %{"page" => params}, %{assigns: %{page: page}} = socket) do
-    changed_page = page |> Page.changeset(params) |> Ecto.Changeset.apply_changes()
-
-    with {:ok, _} <- @page_store.update(changed_page) do
+  def handle_event(
+        "save",
+        %{"page" => %{"title" => title, "content" => content}},
+        %{assigns: %{page: %{id: id}}} = socket
+      ) do
+    with {:ok, _} <- @page_store.update(id, title: title, content: content) do
       {:noreply,
        socket
        |> put_flash(:info, "page updated")
-       |> push_redirect(to: Routes.page_show_path(socket, :show, changed_page.id))}
+       |> push_redirect(to: Routes.page_show_path(socket, :show, id))}
     end
   end
 end

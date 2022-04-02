@@ -56,7 +56,7 @@ defmodule Wiki.PageStore.GenServerImpl do
   end
 
   @impl true
-  def update(%Page{id: id, title: title, content: content}) do
+  def update(id, title: title, content: content) do
     GenServer.cast(__MODULE__, {:update, id, %{title: title, content: content}})
 
     with page when is_map(page) <- GenServer.call(__MODULE__, {:fetch_by_id, id}) do
