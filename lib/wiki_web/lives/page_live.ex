@@ -1,7 +1,7 @@
 defmodule WikiWeb.PageLive do
   use WikiWeb, :live_view
 
-  def mount(_params, session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, assign(socket, action: :main)}
   end
 

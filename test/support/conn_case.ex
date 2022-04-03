@@ -31,7 +31,7 @@ defmodule WikiWeb.ConnCase do
     end
   end
 
-  setup tags do
+  setup _tags do
     # TODO: disable repo
     # pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Wiki.Repo, shared: not tags[:async])
     # on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
