@@ -15,7 +15,7 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def mount(_params, _session, socket) do
-    pages = @page_store.fetch_all(page_num: 1, per_page: 100)
+    pages = @page_store.fetch_all(parent_id: nil, page_num: 1, per_page: 100)
 
     {:ok, assign(socket, pages: pages)}
   end

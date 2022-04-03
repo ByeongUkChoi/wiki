@@ -95,13 +95,13 @@ defmodule Wiki.PageStore.GenServerImpl do
     {:reply, items, init_param}
   end
 
-  defp fetch_and_put_id(map, id), do: map |> Map.get(id) |> Map.put(:id, id)
-
   @impl true
   def handle_call({:get_total_count}, _from, init_param) do
     count = Enum.count(init_param, fn {k, _v} -> is_integer(k) end)
     {:reply, count, init_param}
   end
+
+  defp fetch_and_put_id(map, id), do: map |> Map.get(id) |> Map.put(:id, id)
 
   @impl true
   def handle_cast({:create, id, params}, init_param) do
