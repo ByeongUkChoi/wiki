@@ -16,7 +16,7 @@ defmodule WikiWeb.PageLive.IndexComponent do
     ~H"""
       <li class="columns">
         <%= if @page.has_child do %>
-          <a phx-click="open_child">▶</a>
+          <a phx-click="open_child" phx-value-id={@page.id}>▶</a>
         <% else %>
           <a>■</a>
         <% end %>
