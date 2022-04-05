@@ -21,13 +21,14 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def handle_event("open_child", %{"id" => id}, %{assigns: %{pages: pages}} = socket) do
-    children = @page_store.fetch_all(parent_id: String.to_integer(id), page_num: 1, per_page: 100)
+    parent_id = String.to_integer(id)
+    children = @page_store.fetch_all(parent_id: parent_id, page_num: 1, per_page: 100)
 
     pages_with_children =
       pages
       |> Enum.map(fn page ->
-        if page.id == id do
-          Map.get(page, :children, children)
+        if page.id == parent_id do
+          struct(page, children: children)
         else
           page
         end
