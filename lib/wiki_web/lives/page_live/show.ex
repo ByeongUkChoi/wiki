@@ -21,6 +21,8 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   def mount(%{"id" => id} = _params, _session, socket) do
+    if connected?(socket), do: Phoenix.PubSub.subscribe(Wiki.PubSub, "pages")
+
     with id <- String.to_integer(id),
          {:ok, page} <- @page_store.fetch_by_id(id) do
       ancestors = get_ancestors(page)
@@ -47,5 +49,16 @@ defmodule WikiWeb.PageLive.Show do
        |> put_flash(:info, "page deleted")
        |> push_redirect(to: Routes.page_new_path(socket, :new))}
     end
+  end
+
+  def handle_info(:page_edited, socket) do
+    {:ok, page} = @page_store.fetch_by_id(socket.assigns.page.id)
+
+    socket =
+      socket
+      |> update(:page, fn _ -> Map.from_struct(page) end)
+      |> update(:ancestors, fn _ -> get_ancestors(page) end)
+
+    {:noreply, socket}
   end
 end

@@ -56,6 +56,8 @@ defmodule WikiWeb.PageLive.Edit do
         %{assigns: %{page: %{id: id}}} = socket
       ) do
     with {:ok, _} <- @page_store.update(id, title: title, content: content) do
+      Phoenix.PubSub.broadcast(Wiki.PubSub, "pages", :page_edited)
+
       {:noreply,
        socket
        |> put_flash(:info, "page updated")
