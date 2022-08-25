@@ -15,6 +15,7 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Phoenix.PubSub.subscribe(Wiki.PubSub, "pages")
     pages = @page_store.fetch_all(parent_id: nil, page_num: 1, per_page: 100)
 
     {:ok, assign(socket, pages: pages)}
@@ -35,5 +36,15 @@ defmodule WikiWeb.PageLive.Index do
       end)
 
     {:noreply, assign(socket, pages: pages_with_children)}
+  end
+
+  def handle_info(event, socket) when event in [:page_created, :page_edited] do
+    pages = @page_store.fetch_all(parent_id: nil, page_num: 1, per_page: 100)
+
+    {:noreply, assign(socket, pages: pages)}
+  end
+
+  def handle_info(_event, socket) do
+    {:noreply, socket}
   end
 end
