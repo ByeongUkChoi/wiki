@@ -5,6 +5,7 @@ defmodule WikiWeb.PageLive.New do
 
   alias WikiWeb.PageLive.AncestorNavComponent
   alias Wiki.PageStore.Page
+  alias Wiki.Pages
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
@@ -71,7 +72,7 @@ defmodule WikiWeb.PageLive.New do
       ) do
     with {:ok, %{id: page_id}} <-
            @page_store.create(title: title, content: content, parent_id: parse_integer(parent_id)) do
-      Phoenix.PubSub.broadcast(Wiki.PubSub, "pages", :page_created)
+      Pages.broadcast(:page_created)
 
       {:noreply,
        socket

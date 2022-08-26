@@ -2,6 +2,7 @@ defmodule WikiWeb.PageLive.Index do
   use WikiWeb, :live_view
 
   alias WikiWeb.PageLive.IndexComponent
+  alias Wiki.Pages
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
@@ -15,7 +16,7 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Phoenix.PubSub.subscribe(Wiki.PubSub, "pages")
+    if connected?(socket), do: Pages.subscribe()
     pages = @page_store.fetch_all(parent_id: nil, page_num: 1, per_page: 100)
 
     {:ok, assign(socket, pages: pages)}

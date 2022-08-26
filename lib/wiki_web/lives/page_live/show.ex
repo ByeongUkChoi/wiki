@@ -2,6 +2,7 @@ defmodule WikiWeb.PageLive.Show do
   use WikiWeb, :live_view
 
   alias WikiWeb.PageLive.AncestorNavComponent
+  alias Wiki.Pages
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
@@ -21,7 +22,7 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   def mount(%{"id" => id} = _params, _session, socket) do
-    if connected?(socket), do: Phoenix.PubSub.subscribe(Wiki.PubSub, "pages")
+    if connected?(socket), do: Pages.subscribe()
 
     with id <- String.to_integer(id),
          {:ok, page} <- @page_store.fetch_by_id(id) do
