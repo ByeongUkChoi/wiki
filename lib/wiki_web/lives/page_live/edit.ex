@@ -57,6 +57,7 @@ defmodule WikiWeb.PageLive.Edit do
         %{assigns: %{page: %{id: id}}} = socket
       ) do
     with {:ok, _} <- @page_store.update(id, title: title, content: content) do
+      Pages.broadcast(id, :page_edited)
       Pages.broadcast(:page_edited)
 
       {:noreply,

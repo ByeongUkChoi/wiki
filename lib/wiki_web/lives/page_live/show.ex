@@ -22,13 +22,15 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   def mount(%{"id" => id} = _params, _session, socket) do
-    if connected?(socket), do: Pages.subscribe()
+    if connected?(socket), do: Pages.subscribe(id)
 
     with id <- String.to_integer(id),
          {:ok, page} <- @page_store.fetch_by_id(id) do
       ancestors = get_ancestors(page)
 
       {:ok, assign(socket, page: Map.from_struct(page), ancestors: ancestors)}
+    else
+      _ -> {:error, :not_found}
     end
   end
 
@@ -45,6 +47,9 @@ defmodule WikiWeb.PageLive.Show do
 
   def handle_event("delete", _value, %{assigns: %{page: %{id: id}}} = socket) do
     with :ok <- @page_store.delete_by_id(id) do
+      Pages.broadcast(id, :page_edited)
+      Pages.broadcast(:page_edited)
+
       {:noreply,
        socket
        |> put_flash(:info, "page deleted")
