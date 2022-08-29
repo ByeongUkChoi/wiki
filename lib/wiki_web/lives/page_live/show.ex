@@ -30,7 +30,11 @@ defmodule WikiWeb.PageLive.Show do
 
       {:ok, assign(socket, page: Map.from_struct(page), ancestors: ancestors)}
     else
-      _ -> {:error, :not_found}
+      _ ->
+        {:ok,
+         socket
+         |> put_flash(:error, "Not found page!")
+         |> push_redirect(to: Routes.page_index_path(socket, :index))}
     end
   end
 

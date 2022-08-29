@@ -12,10 +12,10 @@
     <div class="h-screen flex items-center justify-center bg-gray-900">
       <div class="flex flex-col space-y-4 items-center">
         <a href="/">
-          <img src="/images/logo.png" height="128" width="128" alt="wiki" />
+          <img src="/images/wiki.png" height="64" alt="wiki" />
         </a>
         <div class="text-2xl text-gray-50">
-          No Numbats here!
+          Page Not found!
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ config :wiki, WikiWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
   code_reloader: true,
-  debug_errors: true,
+  debug_errors: false,
   secret_key_base: "TIvpNDiGEnM9Io0+QVCC3t412KqXrykjyQxKJr7crcMVQHUMHVfSWs3n//Xd0eEg",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
