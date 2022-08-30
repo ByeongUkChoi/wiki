@@ -12,6 +12,11 @@ defmodule WikiWeb.PageLive.Show do
       <.live_component module={AncestorNavComponent} id="ancestors" ancestors={@ancestors} />
       <h2 class="title"><%= @page.title %></h2>
       <div class="content"><%= @page.content %></div>
+      <%= if @has_child do %>
+        <div class="buttons">
+          <button class="button">Button</button>
+        </div>
+      <% end %>
       <div class="buttons">
         <button class="button is-primary is-light"><%= live_redirect "Edit", to: Routes.page_edit_path(@socket, :edit, @page.id) %></button>
         <button class="button is-info is-light"><%= live_redirect "Create sub page", to: Routes.page_new_path(@socket, :new, parent_id: @page.id) %></button>
@@ -28,7 +33,8 @@ defmodule WikiWeb.PageLive.Show do
          {:ok, page} <- @page_store.fetch_by_id(id) do
       ancestors = get_ancestors(page)
 
-      {:ok, assign(socket, page: Map.from_struct(page), ancestors: ancestors)}
+      {:ok,
+       assign(socket, page: Map.from_struct(page), ancestors: ancestors, has_child: has_child?(id))}
     else
       _ ->
         {:ok,
@@ -47,6 +53,10 @@ defmodule WikiWeb.PageLive.Show do
   defp get_ancestors(%{parent_id: parent_id}, ancestors) do
     {:ok, parent} = @page_store.fetch_by_id(parent_id)
     get_ancestors(parent, [parent | ancestors])
+  end
+
+  defp has_child?(id) do
+    @page_store.fetch_all(parent_id: id, page_num: 1, per_page: 1) != []
   end
 
   def handle_event("delete", _value, %{assigns: %{page: %{id: id}}} = socket) do

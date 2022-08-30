@@ -4,7 +4,7 @@ defmodule Wiki.PageStore do
   alias Wiki.PageStore.{Page, PageIndex}
 
   @type parent_id :: Page.id()
-  @type page_num :: integer()
+  @type page_num :: pos_integer()
   @type per_page :: integer()
 
   @callback fetch_by_id(Page.id()) :: {:ok, Page.t()} | {:error, :not_found}
