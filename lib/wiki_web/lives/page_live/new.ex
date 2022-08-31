@@ -7,8 +7,6 @@ defmodule WikiWeb.PageLive.New do
   alias Wiki.PageStore.Page
   alias Wiki.Pages
 
-  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
-
   def render(assigns) do
     ~H"""
     <div class="container">
@@ -52,7 +50,7 @@ defmodule WikiWeb.PageLive.New do
   end
 
   defp get_ancestors(parent_id, ancestors) do
-    {:ok, parent} = @page_store.fetch_by_id(parent_id)
+    {:ok, parent} = Pages.get(parent_id)
     get_ancestors(parent.parent_id, [parent | ancestors])
   end
 
@@ -70,8 +68,7 @@ defmodule WikiWeb.PageLive.New do
         %{"page" => %{"title" => title, "content" => content, "parent_id" => parent_id}},
         socket
       ) do
-    with {:ok, %{id: page_id}} <-
-           @page_store.create(title: title, content: content, parent_id: parse_integer(parent_id)) do
+    with {:ok, %{id: page_id}} <- Pages.create(title, content, parse_integer(parent_id)) do
       Pages.broadcast(:page_created)
 
       {:noreply,

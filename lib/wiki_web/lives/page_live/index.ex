@@ -4,8 +4,6 @@ defmodule WikiWeb.PageLive.Index do
   alias WikiWeb.PageLive.IndexComponent
   alias Wiki.Pages
 
-  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
-
   def render(assigns) do
     ~H"""
     <aside class="menu">
@@ -17,14 +15,14 @@ defmodule WikiWeb.PageLive.Index do
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: Pages.subscribe()
-    pages = @page_store.fetch_all(parent_id: nil, page_num: 1, per_page: 100)
+    pages = Pages.get_all(1, 100)
 
     {:ok, assign(socket, pages: pages)}
   end
 
   def handle_event("open_child", %{"id" => id}, %{assigns: %{pages: pages}} = socket) do
     parent_id = String.to_integer(id)
-    children = @page_store.fetch_all(parent_id: parent_id, page_num: 1, per_page: 100)
+    children = Pages.get_all(parent_id, 1, 100)
 
     pages_with_children =
       pages
@@ -40,7 +38,7 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def handle_info(event, socket) when event in [:page_created, :page_edited] do
-    pages = @page_store.fetch_all(parent_id: nil, page_num: 1, per_page: 100)
+    pages = Pages.get_all(1, 100)
 
     {:noreply, assign(socket, pages: pages)}
   end

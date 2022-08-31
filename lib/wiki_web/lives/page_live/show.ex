@@ -4,8 +4,6 @@ defmodule WikiWeb.PageLive.Show do
   alias WikiWeb.PageLive.AncestorNavComponent
   alias Wiki.Pages
 
-  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
-
   def render(assigns) do
     ~H"""
     <div class="container">
@@ -30,7 +28,7 @@ defmodule WikiWeb.PageLive.Show do
     if connected?(socket), do: Pages.subscribe(id)
 
     with id <- String.to_integer(id),
-         {:ok, page} <- @page_store.fetch_by_id(id) do
+         {:ok, page} <- Pages.get(id) do
       ancestors = get_ancestors(page)
 
       {:ok,
@@ -51,16 +49,16 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   defp get_ancestors(%{parent_id: parent_id}, ancestors) do
-    {:ok, parent} = @page_store.fetch_by_id(parent_id)
+    {:ok, parent} = Pages.get(parent_id)
     get_ancestors(parent, [parent | ancestors])
   end
 
   defp has_child?(id) do
-    @page_store.fetch_all(parent_id: id, page_num: 1, per_page: 1) != []
+    Pages.get_all(id, 1, 1) != []
   end
 
   def handle_event("delete", _value, %{assigns: %{page: %{id: id}}} = socket) do
-    with :ok <- @page_store.delete_by_id(id) do
+    with :ok <- Pages.delete(id) do
       Pages.broadcast(id, :page_edited)
       Pages.broadcast(:page_edited)
 
@@ -72,7 +70,7 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   def handle_info(:page_edited, socket) do
-    {:ok, page} = @page_store.fetch_by_id(socket.assigns.page.id)
+    {:ok, page} = Pages.get(socket.assigns.page.id)
 
     socket =
       socket

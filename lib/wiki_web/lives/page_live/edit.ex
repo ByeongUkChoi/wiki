@@ -4,8 +4,6 @@ defmodule WikiWeb.PageLive.Edit do
   alias Wiki.Pages
   alias Wiki.PageStore.Page
 
-  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
-
   def render(assigns) do
     ~H"""
     <div class="container">
@@ -36,7 +34,7 @@ defmodule WikiWeb.PageLive.Edit do
 
   def mount(%{"id" => id} = _params, _session, socket) do
     with id <- String.to_integer(id),
-         {:ok, page} <- @page_store.fetch_by_id(id) do
+         {:ok, page} <- Pages.get(id) do
       changeset = page |> Page.changeset(%{}) |> Map.put(:action, :update)
       {:ok, assign(socket, page: page, changeset: changeset)}
     end
@@ -56,7 +54,7 @@ defmodule WikiWeb.PageLive.Edit do
         %{"page" => %{"title" => title, "content" => content}},
         %{assigns: %{page: %{id: id}}} = socket
       ) do
-    with {:ok, _} <- @page_store.update(id, title: title, content: content) do
+    with {:ok, _} <- Pages.update(id, title, content) do
       Pages.broadcast(id, :page_edited)
       Pages.broadcast(:page_edited)
 
