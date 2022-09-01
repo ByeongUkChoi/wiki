@@ -10,9 +10,11 @@ defmodule WikiWeb.PageLive.Show do
       <.live_component module={AncestorNavComponent} id="ancestors" ancestors={@ancestors} />
       <h2 class="title"><%= @page.title %></h2>
       <div class="content"><%= @page.content %></div>
-      <%= if @has_child do %>
+      <%= if @page.children != [] do %>
         <div class="buttons">
-          <button class="button">Button</button>
+          <%= for child <- @page.children do %>
+            <button class="button"><%= child.title %></button>
+          <% end %>
         </div>
       <% end %>
       <div class="buttons">
@@ -30,9 +32,13 @@ defmodule WikiWeb.PageLive.Show do
     with id <- String.to_integer(id),
          {:ok, page} <- Pages.get(id) do
       ancestors = get_ancestors(page)
+      children = Pages.get_all(id, 1, 100)
 
       {:ok,
-       assign(socket, page: Map.from_struct(page), ancestors: ancestors, has_child: has_child?(id))}
+       assign(socket,
+         page: page |> Map.from_struct() |> Map.put(:children, children),
+         ancestors: ancestors
+       )}
     else
       _ ->
         {:ok,
@@ -51,10 +57,6 @@ defmodule WikiWeb.PageLive.Show do
   defp get_ancestors(%{parent_id: parent_id}, ancestors) do
     {:ok, parent} = Pages.get(parent_id)
     get_ancestors(parent, [parent | ancestors])
-  end
-
-  defp has_child?(id) do
-    Pages.get_all(id, 1, 1) != []
   end
 
   def handle_event("delete", _value, %{assigns: %{page: %{id: id}}} = socket) do
