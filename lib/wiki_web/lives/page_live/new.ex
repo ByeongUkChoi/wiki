@@ -71,6 +71,10 @@ defmodule WikiWeb.PageLive.New do
     with {:ok, %{id: page_id}} <- Pages.create(title, content, parse_integer(parent_id)) do
       Pages.broadcast(:page_created)
 
+      if parent_id != nil do
+        Pages.broadcast(parent_id, :child_page_created)
+      end
+
       {:noreply,
        socket
        |> put_flash(:info, "page created")

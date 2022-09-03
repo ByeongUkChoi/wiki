@@ -13,7 +13,7 @@ defmodule WikiWeb.PageLive.Show do
       <%= if @page.children != [] do %>
         <div class="buttons">
           <%= for child <- @page.children do %>
-            <button class="button"><%= child.title %></button>
+            <button class="button"><%= live_redirect child.title, to: Routes.page_show_path(@socket, :show, child.id) %></button>
           <% end %>
         </div>
       <% end %>
@@ -74,11 +74,14 @@ defmodule WikiWeb.PageLive.Show do
   def handle_info(:page_edited, socket) do
     {:ok, page} = Pages.get(socket.assigns.page.id)
 
-    socket =
-      socket
-      |> update(:page, fn _ -> Map.from_struct(page) end)
-      |> update(:ancestors, fn _ -> get_ancestors(page) end)
+    socket = socket |> update(:page, fn _ -> Map.from_struct(page) end)
+    {:noreply, socket}
+  end
 
+  def handle_info(:child_page_created, socket) do
+    {:ok, page} = Pages.get(socket.assigns.page.id)
+
+    socket = socket |> update(:page, fn _ -> Map.from_struct(page) end)
     {:noreply, socket}
   end
 end
