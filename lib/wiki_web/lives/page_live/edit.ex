@@ -33,7 +33,7 @@ defmodule WikiWeb.PageLive.Edit do
   end
 
   def mount(%{"id" => id} = _params, _session, socket) do
-    with id <- String.to_integer(id),
+    with id <- Transformer.to_integer_or(id),
          {:ok, page} <- Pages.get(id) do
       changeset = page |> Page.changeset(%{}) |> Map.put(:action, :update)
       {:ok, assign(socket, page: page, changeset: changeset)}

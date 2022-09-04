@@ -21,7 +21,7 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def handle_event("open_child", %{"id" => id}, %{assigns: %{pages: pages}} = socket) do
-    parent_id = String.to_integer(id)
+    parent_id = Transformer.to_integer_or(id)
     children = Pages.get_all(parent_id, 1, 100)
 
     pages_with_children =

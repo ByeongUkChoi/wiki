@@ -38,7 +38,7 @@ defmodule WikiWeb.PageLive.New do
   end
 
   def mount(params, _session, socket) do
-    parent_id = params["parent_id"] |> parse_integer()
+    parent_id = Transformer.to_integer_or(params["parent_id"])
     ancestors = get_ancestors(parent_id)
     {:ok, assign(socket, changeset: change(%Page{}), parent_id: parent_id, ancestors: ancestors)}
   end
@@ -65,10 +65,12 @@ defmodule WikiWeb.PageLive.New do
 
   def handle_event(
         "save",
-        %{"page" => %{"title" => title, "content" => content, "parent_id" => parent_id}},
+        %{"page" => %{"title" => title, "content" => content, "parent_id" => parent_id_str}},
         socket
       ) do
-    with {:ok, %{id: page_id}} <- Pages.create(title, content, parse_integer(parent_id)) do
+    parent_id = Transformer.to_integer_or(parent_id_str)
+
+    with {:ok, %{id: page_id}} <- Pages.create(title, content, parent_id) do
       Pages.broadcast(:page_created)
 
       if parent_id != nil do
@@ -79,18 +81,6 @@ defmodule WikiWeb.PageLive.New do
        socket
        |> put_flash(:info, "page created")
        |> push_redirect(to: Routes.page_show_path(socket, :show, page_id))}
-    end
-  end
-
-  defp parse_integer(nil), do: nil
-  defp parse_integer(""), do: nil
-  defp parse_integer(int) when is_integer(int), do: int
-
-  defp parse_integer(str) when is_binary(str) do
-    Integer.parse(str)
-    |> case do
-      {int, _} -> int
-      _ -> nil
     end
   end
 end

@@ -29,7 +29,7 @@ defmodule WikiWeb.PageLive.Show do
   def mount(%{"id" => id} = _params, _session, socket) do
     if connected?(socket), do: Pages.subscribe(id)
 
-    with id <- String.to_integer(id),
+    with id <- Transformer.to_integer_or(id),
          {:ok, page} <- Pages.get(id) do
       ancestors = get_ancestors(page)
       children = Pages.get_all(id, 1, 100)
