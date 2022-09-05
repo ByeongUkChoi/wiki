@@ -78,7 +78,7 @@ defmodule WikiWeb.PageLive.Show do
     {:noreply, socket}
   end
 
-  def handle_info(:child_page_created, socket) do
+  def handle_info(event, socket) when event in [:child_page_created, :child_page_edited] do
     {:ok, page} = Pages.get(socket.assigns.page.id)
 
     socket = socket |> update(:page, fn _ -> Map.from_struct(page) end)

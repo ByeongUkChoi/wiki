@@ -71,7 +71,8 @@ defmodule Wiki.PageStore.PostgreImpl do
 
   @impl true
   def update(id, title: title, content: content) do
-    %Page{id: id}
+    Page
+    |> Repo.get(id)
     |> change(title: title, content: content)
     |> Repo.update()
     |> case do

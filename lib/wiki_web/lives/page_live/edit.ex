@@ -54,9 +54,13 @@ defmodule WikiWeb.PageLive.Edit do
         %{"page" => %{"title" => title, "content" => content}},
         %{assigns: %{page: %{id: id}}} = socket
       ) do
-    with {:ok, _} <- Pages.update(id, title, content) do
-      Pages.broadcast(id, :page_edited)
+    with {:ok, %{parent_id: parent_id}} <- Pages.update(id, title, content) do
       Pages.broadcast(:page_edited)
+      Pages.broadcast(id, :page_edited)
+
+      if parent_id do
+        Pages.broadcast(parent_id, :child_page_edited)
+      end
 
       {:noreply,
        socket
