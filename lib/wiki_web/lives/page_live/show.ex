@@ -26,25 +26,19 @@ defmodule WikiWeb.PageLive.Show do
     """
   end
 
-  def mount(%{"id" => id} = _params, _session, socket) do
+  def mount(%{"id" => id_str} = _params, _session, socket) do
+    id = Transformer.to_integer_or(id_str)
     if connected?(socket), do: Pages.subscribe(id)
 
-    with id <- Transformer.to_integer_or(id),
-         {:ok, page} <- Pages.get(id) do
-      ancestors = get_ancestors(page)
-      children = Pages.get_all(id, 1, 100)
-
-      {:ok,
-       assign(socket,
-         page: page |> Map.from_struct() |> Map.put(:children, children),
-         ancestors: ancestors
-       )}
-    else
-      _ ->
+    case get_page_with_children(id) do
+      nil ->
         {:ok,
          socket
          |> put_flash(:error, "Not found page!")
          |> push_redirect(to: Routes.page_index_path(socket, :index))}
+
+      page ->
+        {:ok, assign(socket, page: page, ancestors: get_ancestors(page))}
     end
   end
 
@@ -79,9 +73,14 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   def handle_info(event, socket) when event in [:child_page_created, :child_page_edited] do
-    {:ok, page} = Pages.get(socket.assigns.page.id)
-
-    socket = socket |> update(:page, fn _ -> Map.from_struct(page) end)
+    socket = socket |> update(:page, fn _ -> get_page_with_children(socket.assigns.page.id) end)
     {:noreply, socket}
+  end
+
+  defp get_page_with_children(id) do
+    case Pages.get(id) do
+      {:ok, page} -> Map.put(page, :children, Pages.get_all(id, 1, 100))
+      _ -> nil
+    end
   end
 end
