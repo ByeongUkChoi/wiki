@@ -66,15 +66,11 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   def handle_info(:page_edited, socket) do
-    {:ok, page} = Pages.get(socket.assigns.page.id)
-
-    socket = socket |> update(:page, fn _ -> Map.from_struct(page) end)
-    {:noreply, socket}
+    {:noreply, update(socket, :page, fn _ -> get_page_with_children(socket.assigns.page.id) end)}
   end
 
   def handle_info(event, socket) when event in [:child_page_created, :child_page_edited] do
-    socket = socket |> update(:page, fn _ -> get_page_with_children(socket.assigns.page.id) end)
-    {:noreply, socket}
+    {:noreply, update(socket, :page, fn _ -> get_page_with_children(socket.assigns.page.id) end)}
   end
 
   defp get_page_with_children(id) do

@@ -19,20 +19,29 @@ defmodule Wiki.PageStore.PostgreImpl do
 
   @impl true
   def fetch_all(parent_id: parent_id, page_num: page_num, per_page: per_page) do
-    page_indexes =
-      from(p in Page,
-        select: %PageIndex{id: p.id, title: p.title, parent_id: p.parent_id},
-        limit: ^per_page,
-        offset: ^((page_num - 1) * per_page)
-      )
-      |> then(fn query ->
-        cond do
-          is_nil(parent_id) -> query |> where([p], is_nil(p.parent_id))
-          true -> query |> where([p], p.parent_id == ^parent_id)
-        end
-      end)
-      |> Repo.all()
+    from(p in Page,
+      select: %PageIndex{id: p.id, title: p.title, parent_id: p.parent_id},
+      limit: ^per_page,
+      offset: ^((page_num - 1) * per_page)
+    )
+    |> then(fn query ->
+      cond do
+        is_nil(parent_id) -> query |> where([p], is_nil(p.parent_id))
+        true -> query |> where([p], p.parent_id == ^parent_id)
+      end
+    end)
+    |> Repo.all()
+    |> append_has_child()
+  end
 
+  @impl true
+  def fetch_all(page_num: page_num, per_page: per_page) do
+    from(p in Page, limit: ^per_page, offset: ^((page_num - 1) * per_page))
+    |> Repo.all()
+    |> append_has_child()
+  end
+
+  defp append_has_child(page_indexes) do
     page_ids = Enum.map(page_indexes, & &1.id)
 
     page_ids_has_child =
@@ -47,12 +56,6 @@ defmodule Wiki.PageStore.PostgreImpl do
     has_child = fn page_id -> MapSet.member?(page_ids_has_child, page_id) end
 
     page_indexes |> Enum.map(&Map.put(&1, :has_child, has_child.(&1.id)))
-  end
-
-  @impl true
-  def fetch_all(page_num: page_num, per_page: per_page) do
-    from(p in Page, limit: ^per_page, offset: ^((page_num - 1) * per_page))
-    |> Repo.all()
   end
 
   @impl true
