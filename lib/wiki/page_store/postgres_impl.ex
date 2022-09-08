@@ -36,7 +36,11 @@ defmodule Wiki.PageStore.PostgreImpl do
 
   @impl true
   def fetch_all(page_num: page_num, per_page: per_page) do
-    from(p in Page, limit: ^per_page, offset: ^((page_num - 1) * per_page))
+    from(p in Page,
+      select: %PageIndex{id: p.id, title: p.title, parent_id: p.parent_id},
+      limit: ^per_page,
+      offset: ^((page_num - 1) * per_page)
+    )
     |> Repo.all()
     |> append_has_child()
   end
