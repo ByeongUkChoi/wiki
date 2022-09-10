@@ -3,12 +3,21 @@ defmodule Wiki.Page do
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
-  def new(title: title, content: content, parent_id: parent_id) do
-    GenServer.start_link(__MODULE__, title: title, content: content, parent_id: parent_id)
+  @spec new(%{
+          optional(:title) => String.t(),
+          optional(:content) => String.t(),
+          optional(:parent_id) => integer() | nil
+        }) :: :ok | {:error, any()}
+  def new(params) do
+    GenServer.start_link(__MODULE__, params)
   end
 
   def get(id) do
     GenServer.start_link(__MODULE__, id)
+  end
+
+  def state(pid) do
+    GenServer.call(pid, :state)
   end
 
   @spec update(pid(), %{optional(:title) => String.t(), optional(:content) => String.t()}) :: :ok
@@ -17,12 +26,20 @@ defmodule Wiki.Page do
     GenServer.cast(pid, {:update, Map.take(params, [:title, :content])})
   end
 
-  def init(title: title, content: content, parent_id: parent_id) do
-    @page_store.create(title: title, content: content, parent_id: parent_id)
+  def delete(pid) do
+    GenServer.cast(pid, :delete)
+  end
+
+  def init(%{} = params) do
+    @page_store.create(title: params.title, content: params.content, parent_id: params.parent_id)
   end
 
   def init(id) do
     @page_store.fetch_by_id(id)
+  end
+
+  def handle_call(:state, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_cast({:update, params}, state) do
@@ -34,5 +51,9 @@ defmodule Wiki.Page do
       end)
 
     {:noreply, new_state}
+  end
+
+  def handle_cast({:delete}, state) do
+    {:stop, :normal, state}
   end
 end
