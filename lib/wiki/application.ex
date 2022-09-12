@@ -15,8 +15,9 @@ defmodule Wiki.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Wiki.PubSub},
       # Start the Endpoint (http/https)
-      WikiWeb.Endpoint
+      WikiWeb.Endpoint,
       # Start a worker by calling: Wiki.Worker.start_link(arg)
+      Wiki.Registry
       # {Wiki.Worker, arg}
       # data store
       # {Wiki.PageStore.GenServerImpl, %{}}
