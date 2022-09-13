@@ -9,11 +9,19 @@ defmodule Wiki.Registry do
     GenServer.call({:global, __MODULE__}, {:lookup, table, id})
   end
 
+  def register(table, id, value) do
+    GenServer.cast({:global, __MODULE__}, {:register, table, id, value})
+  end
+
   def init(:no_args) do
     {:ok, %{}}
   end
 
   def handle_call({:lookup, table, id}, _from, state) do
     {:reply, Map.get(state, {table, id}), state}
+  end
+
+  def handle_cast({:register, table, id, value}, state) do
+    {:noreply, Map.put(state, {table, id}, value)}
   end
 end
