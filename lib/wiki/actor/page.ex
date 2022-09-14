@@ -16,9 +16,11 @@ defmodule Wiki.Actor.Page do
   end
 
   def get(id) do
-    case Registry.lookup(@table, id) do
-      nil -> GenServer.start_link(__MODULE__, id)
-      pid -> GenServer.start_link(pid, id)
+    if pid = Registry.lookup(@table, id) do
+      GenServer.start_link(pid, id)
+    else
+      {:ok, pid} = GenServer.start_link(__MODULE__, id)
+      Registry.register(@table, id, pid)
     end
   end
 
