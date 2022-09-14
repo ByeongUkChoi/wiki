@@ -1,6 +1,9 @@
-defmodule Wiki.Page do
+defmodule Wiki.Actor.Page do
   use GenServer
 
+  alias Wiki.Registry
+
+  @table :page
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
   @spec new(%{
@@ -13,7 +16,10 @@ defmodule Wiki.Page do
   end
 
   def get(id) do
-    GenServer.start_link(__MODULE__, id)
+    case Registry.lookup(@table, id) do
+      nil -> GenServer.start_link(__MODULE__, id)
+      pid -> GenServer.start_link(pid, id)
+    end
   end
 
   def state(pid) do
