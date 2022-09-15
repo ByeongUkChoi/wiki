@@ -58,10 +58,13 @@ defmodule Wiki.Actor.Page do
         Map.put(acc_state, k, v)
       end)
 
+    @page_store.update(new_state.id, title: new_state.title, content: new_state.content)
+
     {:noreply, new_state}
   end
 
   def handle_cast({:delete}, state) do
+    @page_store.delete_by_id(state.id)
     {:stop, :normal, state}
   end
 end
