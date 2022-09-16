@@ -19,15 +19,15 @@ defmodule Wiki.PageActors do
   end
 
   def create(title, content, parent_id) do
-    @page_store.create(title: title, content: content, parent_id: parent_id)
+    PageActor.create(%{title: title, content: content, parent_id: parent_id})
   end
 
   def delete(id) do
-    @page_store.delete_by_id(id)
+    PageActor.delete(id)
   end
 
   def update(id, title, content) do
-    @page_store.update(id, title: title, content: content)
+    PageActor.update(id, %{title: title, content: content})
   end
 
   def subscribe() do

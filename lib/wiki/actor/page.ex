@@ -6,12 +6,12 @@ defmodule Wiki.Actor.Page do
   @table :page
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
 
-  @spec new(%{
+  @spec create(%{
           optional(:title) => String.t(),
           optional(:content) => String.t(),
           optional(:parent_id) => integer() | nil
         }) :: :ok | {:error, any()}
-  def new(params) do
+  def create(params) do
     GenServer.start_link(__MODULE__, params)
   end
 
@@ -28,13 +28,16 @@ defmodule Wiki.Actor.Page do
     GenServer.call(pid, :state)
   end
 
-  @spec update(pid(), %{optional(:title) => String.t(), optional(:content) => String.t()}) :: :ok
-  def update(pid, params) do
+  @spec update(integer(), %{optional(:title) => String.t(), optional(:content) => String.t()}) ::
+          :ok
+  def update(id, params) do
+    pid = Registry.lookup(@table, id)
     Map.take(params, [:title, :content])
     GenServer.cast(pid, {:update, Map.take(params, [:title, :content])})
   end
 
-  def delete(pid) do
+  def delete(id) do
+    pid = Registry.lookup(@table, id)
     GenServer.cast(pid, :delete)
   end
 
