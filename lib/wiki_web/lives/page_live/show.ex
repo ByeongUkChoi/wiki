@@ -74,7 +74,7 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   defp get_page_with_children(id) do
-    case Pages.get(id) do
+    case Wiki.PageActors.get(id) do
       {:ok, page} -> Map.put(page, :children, Pages.get_all(id, 1, 100))
       _ -> nil
     end

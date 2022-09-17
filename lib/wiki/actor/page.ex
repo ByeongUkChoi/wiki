@@ -17,10 +17,11 @@ defmodule Wiki.Actor.Page do
 
   def get(id) do
     if pid = Registry.lookup(@table, id) do
-      GenServer.start_link(pid, id)
+      {:ok, pid}
     else
       {:ok, pid} = GenServer.start_link(__MODULE__, id)
       Registry.register(@table, id, pid)
+      {:ok, pid}
     end
   end
 

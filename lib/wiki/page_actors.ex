@@ -5,7 +5,10 @@ defmodule Wiki.PageActors do
 
   @spec get(any) :: {:error, :not_found} | {:ok, Page.t()}
   def get(id) do
-    PageActor.get(id)
+    case PageActor.get(id) do
+      {:ok, pid} -> {:ok, PageActor.state(pid)}
+      _ -> {:error, :not_found}
+    end
   end
 
   @spec get_all(integer(), integer()) :: list(PageIndex.t())
