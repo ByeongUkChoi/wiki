@@ -6,6 +6,7 @@ defmodule WikiWeb.PageLive.New do
   alias WikiWeb.PageLive.AncestorNavComponent
   alias Wiki.PageStore.Page
   alias Wiki.Pages
+  alias Wiki.PageActors
 
   def render(assigns) do
     ~H"""
@@ -50,7 +51,7 @@ defmodule WikiWeb.PageLive.New do
   end
 
   defp get_ancestors(parent_id, ancestors) do
-    {:ok, parent} = Pages.get(parent_id)
+    {:ok, parent} = PageActors.get(parent_id)
     get_ancestors(parent.parent_id, [parent | ancestors])
   end
 
@@ -71,10 +72,10 @@ defmodule WikiWeb.PageLive.New do
     parent_id = Transformer.to_integer_or(parent_id_str)
 
     with {:ok, %{id: page_id}} <- Pages.create(title, content, parent_id) do
-      Pages.broadcast(:page_created)
+      PageActors.broadcast(:page_created)
 
       if parent_id != nil do
-        Pages.broadcast(parent_id, :child_page_created)
+        PageActors.broadcast(parent_id, :child_page_created)
       end
 
       {:noreply,

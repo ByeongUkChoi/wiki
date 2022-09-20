@@ -3,6 +3,7 @@ defmodule WikiWeb.PageLive.Index do
 
   alias WikiWeb.PageLive.IndexComponent
   alias Wiki.Pages
+  alias Wiki.PageActors
 
   def render(assigns) do
     ~H"""
@@ -14,8 +15,8 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Pages.subscribe()
-    pages = Pages.get_all(nil, 1, 100)
+    if connected?(socket), do: PageActors.subscribe()
+    pages = Pages.get_all(1, 100)
 
     {:ok, assign(socket, pages: pages)}
   end

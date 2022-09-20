@@ -3,6 +3,7 @@ defmodule WikiWeb.PageLive.Edit do
 
   alias Wiki.Pages
   alias Wiki.PageStore.Page
+  alias Wiki.PageActors
 
   def render(assigns) do
     ~H"""
@@ -34,7 +35,7 @@ defmodule WikiWeb.PageLive.Edit do
 
   def mount(%{"id" => id} = _params, _session, socket) do
     with id <- Transformer.to_integer_or(id),
-         {:ok, page} <- Pages.get(id) do
+         {:ok, page} <- PageActors.get(id) do
       changeset = page |> Page.changeset(%{}) |> Map.put(:action, :update)
       {:ok, assign(socket, page: page, changeset: changeset)}
     end

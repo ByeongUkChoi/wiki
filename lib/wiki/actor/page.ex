@@ -10,7 +10,7 @@ defmodule Wiki.Actor.Page do
           optional(:title) => String.t(),
           optional(:content) => String.t(),
           optional(:parent_id) => integer() | nil
-        }) :: :ok | {:error, any()}
+        }) :: {:ok, pid()} | {:error, any()}
   def create(params) do
     GenServer.start_link(__MODULE__, params)
   end
