@@ -2,7 +2,6 @@ defmodule WikiWeb.PageLive.Show do
   use WikiWeb, :live_view
 
   alias WikiWeb.PageLive.AncestorNavComponent
-  alias Wiki.Pages
   alias Wiki.PageActors
 
   def render(assigns) do
@@ -77,7 +76,7 @@ defmodule WikiWeb.PageLive.Show do
 
   defp get_page_with_children(id) do
     case PageActors.get(id) do
-      {:ok, page} -> Map.put(page, :children, Pages.get_all(id, 1, 100))
+      {:ok, page} -> Map.put(page, :children, PageActors.get_all(id, 1, 100))
       _ -> nil
     end
   end

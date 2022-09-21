@@ -2,7 +2,10 @@ defmodule Wiki.Registry do
   use GenServer
 
   def start_link(_) do
-    GenServer.start_link(__MODULE__, :no_args, name: {:global, __MODULE__})
+    case GenServer.start_link(__MODULE__, :no_args, name: {:global, __MODULE__}) do
+      {:error, {:already_started, pid}} -> {:ok, pid}
+      other -> other
+    end
   end
 
   def lookup(table, id) do
@@ -18,7 +21,7 @@ defmodule Wiki.Registry do
   end
 
   def handle_call({:lookup, table, id}, _from, state) do
-    {:reply, Map.get(state, {table, id}), state}
+    {:reply, get_in(state, [table, id]), state}
   end
 
   def handle_cast({:register, table, id, value}, state) do
