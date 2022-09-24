@@ -1,7 +1,6 @@
 defmodule WikiWeb.PageLive.Edit do
   use WikiWeb, :live_view
 
-  alias Wiki.Pages
   alias Wiki.PageStore.Page
   alias Wiki.PageActors
 
@@ -55,7 +54,7 @@ defmodule WikiWeb.PageLive.Edit do
         %{"page" => %{"title" => title, "content" => content}},
         %{assigns: %{page: %{id: id}}} = socket
       ) do
-    with {:ok, %{parent_id: parent_id}} <- Pages.update(id, title, content) do
+    with {:ok, %{parent_id: parent_id}} <- PageActors.update(id, title, content) do
       PageActors.broadcast(:page_edited)
       PageActors.broadcast(id, :page_edited)
 

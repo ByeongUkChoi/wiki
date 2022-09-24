@@ -22,7 +22,7 @@ defmodule Wiki.PageActors do
   end
 
   def create(title, content, parent_id) do
-    PageActor.create(%{title: title, content: content, parent_id: parent_id})
+    {:ok, pid} = PageActor.create(%{title: title, content: content, parent_id: parent_id})
   end
 
   def delete(id) do
@@ -31,6 +31,8 @@ defmodule Wiki.PageActors do
 
   def update(id, title, content) do
     PageActor.update(id, %{title: title, content: content})
+
+    get(id)
   end
 
   def subscribe() do
