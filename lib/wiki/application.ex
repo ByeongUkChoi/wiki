@@ -10,6 +10,8 @@ defmodule Wiki.Application do
     children = [
       # Start the Ecto repository
       Wiki.Repo,
+      # Start mongo db connection
+      {Mongo, [name: :mongo, database: "wiki", pool_size: 2]},
       # Start the Telemetry supervisor
       WikiWeb.Telemetry,
       # Start the PubSub system

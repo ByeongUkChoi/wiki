@@ -50,7 +50,8 @@ defmodule Wiki.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:life_cycle_hook, "~> 0.8"},
-      {:transformer, "~> 0.0.3"}
+      {:transformer, "~> 0.0.3"},
+      {:mongodb, "~> 0.5.1"}
     ]
   end
 
