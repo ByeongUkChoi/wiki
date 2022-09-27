@@ -28,15 +28,15 @@ defmodule Wiki.PageStore.Page do
     |> validate_length(:title, max: 255)
   end
 
-  defimpl Mongo.Encoder do
-    def encode(%{id: id, title: title, content: content, parent_id: parent_id}) do
-      %{
-        _id: id,
-        title: title,
-        content: content,
-        parent_id: parent_id,
-        custom_encoded: true
-      }
-    end
-  end
+  # defimpl Mongo.Encoder do
+  #   def encode(%{id: id, title: title, content: content, parent_id: parent_id}) do
+  #     %{
+  #       _id: id,
+  #       title: title,
+  #       content: content,
+  #       parent_id: parent_id,
+  #       custom_encoded: true
+  #     }
+  #   end
+  # end
 end
