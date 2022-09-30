@@ -2,6 +2,7 @@ defmodule Wiki.PageStore.MongoImpl do
   alias Wiki.PageStore.Page
 
   @behaviour Wiki.PageStore
+  @collection "pages"
 
   @impl true
   def fetch_by_id(id) do
@@ -25,7 +26,11 @@ defmodule Wiki.PageStore.MongoImpl do
 
   @impl true
   def create(title: title, content: content, parent_id: parent_id) do
-    {:ok, %Page{}}
+
+    page = %Page{title: title, content: content, parent_id: parent_id}
+
+    Mongo.insert_one(:mongo, @collection, Mongo.Encoder.encode(page))
+    {:ok, page}
   end
 
   @impl true
