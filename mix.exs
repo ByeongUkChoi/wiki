@@ -51,7 +51,7 @@ defmodule Wiki.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:life_cycle_hook, "~> 0.8"},
       {:transformer, "~> 0.0.3"},
-      {:mongodb, "~> 0.5.1"}
+      {:mongodb_driver, "~> 0.9.2"}
     ]
   end
 

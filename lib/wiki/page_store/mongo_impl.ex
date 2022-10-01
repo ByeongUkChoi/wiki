@@ -6,7 +6,16 @@ defmodule Wiki.PageStore.MongoImpl do
 
   @impl true
   def fetch_by_id(id) do
-    {:ok, %Page{}}
+    Mongo.find_one(:mongo, @collection, %{_id: id})
+    |> then(
+      &%Page{
+        id: &1["_id"],
+        title: &1["title"],
+        content: &1["content"],
+        parent_id: &1["parent_id"]
+      }
+    )
+    |> then(&{:ok, &1})
   end
 
   @impl true
@@ -26,7 +35,6 @@ defmodule Wiki.PageStore.MongoImpl do
 
   @impl true
   def create(title: title, content: content, parent_id: parent_id) do
-
     page = %Page{title: title, content: content, parent_id: parent_id}
 
     Mongo.insert_one(:mongo, @collection, Mongo.Encoder.encode(page))
@@ -35,6 +43,8 @@ defmodule Wiki.PageStore.MongoImpl do
 
   @impl true
   def update(id, title: title, content: content) do
+    Mongo.update_one(:mongo, @collection, %{_id: id}, %{"$set": %{title: title, content: content}})
+
     {:ok, %Page{}}
   end
 
