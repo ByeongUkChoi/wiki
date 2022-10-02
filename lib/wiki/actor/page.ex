@@ -4,7 +4,7 @@ defmodule Wiki.Actor.Page do
   alias Wiki.Registry
 
   @table :page
-  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.PostgreImpl)
+  @page_store Application.compile_env(:wiki, :page_store)
 
   @spec create(%{
           optional(:title) => String.t(),
