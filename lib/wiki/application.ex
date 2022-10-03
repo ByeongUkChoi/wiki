@@ -8,8 +8,6 @@ defmodule Wiki.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Wiki.Repo,
       # Start mongo db connection
       {Mongo, [name: :mongo, database: "wiki", pool_size: 2]},
       # Start the Telemetry supervisor

@@ -1,7 +1,4 @@
 defmodule Wiki.PageStore.Page do
-  use Ecto.Schema
-  import Ecto.Changeset
-
   @type id :: integer()
   @type t :: %__MODULE__{
           id: id,
@@ -12,19 +9,19 @@ defmodule Wiki.PageStore.Page do
           updated_at: DateTime.t()
         }
 
-  schema "pages" do
-    field :title, :string
-    field :content, :string
-    field :parent_id, :integer
+  # schema "pages" do
+  #   field :title, :string
+  #   field :content, :string
+  #   field :parent_id, :integer
 
-    timestamps()
-  end
+  #   timestamps()
+  # end
 
   @doc false
-  def changeset(document, attrs) do
-    document
-    |> cast(attrs, [:title, :content, :parent_id])
-    |> validate_required([:title, :content, :parent_id])
-    |> validate_length(:title, max: 255)
-  end
+  # def changeset(document, attrs) do
+  #   document
+  #   |> cast(attrs, [:title, :content, :parent_id])
+  #   |> validate_required([:title, :content, :parent_id])
+  #   |> validate_length(:title, max: 255)
+  # end
 end

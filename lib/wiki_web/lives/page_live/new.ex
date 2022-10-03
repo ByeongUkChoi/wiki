@@ -1,8 +1,6 @@
 defmodule WikiWeb.PageLive.New do
   use WikiWeb, :live_view
 
-  import Ecto.Changeset
-
   alias WikiWeb.PageLive.AncestorNavComponent
   alias Wiki.PageStore.Page
   alias Wiki.PageActors
