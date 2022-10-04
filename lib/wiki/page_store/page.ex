@@ -1,27 +1,11 @@
 defmodule Wiki.PageStore.Page do
-  @type id :: integer()
   @type t :: %__MODULE__{
-          id: id,
+          id: integer(),
           title: String.t(),
           content: String.t(),
-          parent_id: id,
+          parent_id: integer() | nil,
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
-
-  # schema "pages" do
-  #   field :title, :string
-  #   field :content, :string
-  #   field :parent_id, :integer
-
-  #   timestamps()
-  # end
-
-  @doc false
-  # def changeset(document, attrs) do
-  #   document
-  #   |> cast(attrs, [:title, :content, :parent_id])
-  #   |> validate_required([:title, :content, :parent_id])
-  #   |> validate_length(:title, max: 255)
-  # end
+  defstruct [:id, :title, :content, :parent_id, :inserted_at, :updated_at]
 end

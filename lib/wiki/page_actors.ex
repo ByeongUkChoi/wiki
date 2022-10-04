@@ -1,7 +1,7 @@
 defmodule Wiki.Pages do
   alias Wiki.Actor.Page, as: PageActor
 
-  @page_store Application.compile_env(:wiki, :page_store)
+  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.MongoImpl)
 
   @spec get(any) :: {:error, :not_found} | {:ok, Page.t()}
   def get(id) do

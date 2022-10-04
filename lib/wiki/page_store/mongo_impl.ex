@@ -50,6 +50,7 @@ defmodule Wiki.PageStore.MongoImpl do
 
   @impl true
   def delete_by_id(id) do
+    Mongo.delete_one(:mongo, @collection, %{_id: id})
     :ok
   end
 end
