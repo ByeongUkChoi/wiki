@@ -6,18 +6,12 @@ defmodule Wiki.Actor.Page do
   @table :page
   @page_store Application.compile_env(:wiki, :page_store)
 
-  @spec create(%{
-          optional(:title) => String.t(),
-          optional(:content) => String.t(),
-          optional(:parent_id) => integer() | nil
-        }) :: {:ok, pid()} | {:error, any()}
-
-  def start_link(id) do
+  defp start_link(id) do
     GenServer.start_link(__MODULE__, [id: id], name: {:global, {__MODULE__, id}})
-  end
-
-  def create(params) do
-    GenServer.start_link(__MODULE__, params, name: {:global, __MODULE__})
+    |> case do
+      {:ok, pid} -> {:ok, pid}
+      {:error, {_, pid}} -> {:ok, pid}
+    end
   end
 
   def get(id) do
@@ -28,14 +22,10 @@ defmodule Wiki.Actor.Page do
     |> GenServer.call(:get)
   end
 
-  def state(pid) do
-    GenServer.call(pid, :state)
-  end
-
   @spec update(integer(), %{optional(:title) => String.t(), optional(:content) => String.t()}) ::
           :ok
   def update(id, params) do
-    pid = Registry.lookup(@table, id)
+    {:ok, pid} = start_link(id)
     Map.take(params, [:title, :content])
     GenServer.cast(pid, {:update, Map.take(params, [:title, :content])})
   end
@@ -68,8 +58,6 @@ defmodule Wiki.Actor.Page do
       |> Enum.reduce(state, fn {k, v}, acc_state ->
         Map.put(acc_state, k, v)
       end)
-
-    @page_store.update(new_state.id, title: new_state.title, content: new_state.content)
 
     {:noreply, new_state}
   end
