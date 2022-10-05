@@ -38,7 +38,7 @@ defmodule WikiWeb.PageLive.New do
   def mount(params, _session, socket) do
     parent_id = Transformer.to_integer_or(params["parent_id"])
     ancestors = get_ancestors(parent_id)
-    {:ok, assign(socket, changeset: change(%Page{}), parent_id: parent_id, ancestors: ancestors)}
+    {:ok, assign(socket, changeset: %Page{}, parent_id: parent_id, ancestors: ancestors)}
   end
 
   defp get_ancestors(parent_id, ancestors \\ [])

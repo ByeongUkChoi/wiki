@@ -11,18 +11,21 @@ defmodule Wiki.Actor.Page do
           optional(:content) => String.t(),
           optional(:parent_id) => integer() | nil
         }) :: {:ok, pid()} | {:error, any()}
+
+  def start_link(id) do
+    GenServer.start_link(__MODULE__, [id: id], name: {:global, {__MODULE__, id}})
+  end
+
   def create(params) do
-    GenServer.start_link(__MODULE__, params)
+    GenServer.start_link(__MODULE__, params, name: {:global, __MODULE__})
   end
 
   def get(id) do
-    if pid = Registry.lookup(@table, id) do
-      {:ok, pid}
-    else
-      {:ok, pid} = GenServer.start_link(__MODULE__, id)
-      Registry.register(@table, id, pid)
-      {:ok, pid}
+    case GenServer.whereis({:global, {__MODULE__, id}}) do
+      nil -> start_link(id) |> elem(1)
+      pid -> pid
     end
+    |> GenServer.call(:get)
   end
 
   def state(pid) do
@@ -40,6 +43,10 @@ defmodule Wiki.Actor.Page do
   def delete(id) do
     pid = Registry.lookup(@table, id)
     GenServer.cast(pid, :delete)
+  end
+
+  def init(id: id) do
+    {:ok, @page_store.fetch_by_id(id)}
   end
 
   def init(%{} = params) do
