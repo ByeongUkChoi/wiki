@@ -4,13 +4,25 @@ defmodule Wiki.Actor.Page do
   alias Wiki.Registry
 
   @table :page
-  @page_store Application.compile_env(:wiki, :page_store)
+  @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.MongoImpl)
+
+  defp get_pid(id) do
+    case GenServer.whereis({:global, {__MODULE__, id}}) do
+      nil -> start_link(id)
+      pid -> pid
+    end
+  end
 
   defp start_link(id) do
-    GenServer.start_link(__MODULE__, [id: id], name: {:global, {__MODULE__, id}})
-    |> case do
+    page =
+      case @page_store.fetch_by_id(id) do
+        nil -> %{}
+        page -> page
+      end
+
+    case GenServer.start_link(__MODULE__, page, {:global, {__MODULE__, id}}) do
       {:ok, pid} -> {:ok, pid}
-      {:error, {_, pid}} -> {:ok, pid}
+      {:error, {:already_started, pid}} -> {:ok, pid}
     end
   end
 
@@ -35,16 +47,8 @@ defmodule Wiki.Actor.Page do
     GenServer.cast(pid, :delete)
   end
 
-  def init(id: id) do
-    {:ok, @page_store.fetch_by_id(id)}
-  end
-
-  def init(%{} = params) do
-    @page_store.create(title: params.title, content: params.content, parent_id: params.parent_id)
-  end
-
-  def init(id) do
-    @page_store.fetch_by_id(id)
+  def init(page) do
+    {:ok, page}
   end
 
   def handle_call(:state, _from, state) do
