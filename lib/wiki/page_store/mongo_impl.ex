@@ -6,16 +6,19 @@ defmodule Wiki.PageStore.MongoImpl do
 
   @impl true
   def fetch_by_id(id) do
-    Mongo.find_one(:mongo, @collection, %{_id: id})
-    |> then(
-      &%Page{
-        id: &1["_id"],
-        title: &1["title"],
-        content: &1["content"],
-        parent_id: &1["parent_id"]
-      }
-    )
-    |> then(&{:ok, &1})
+    case Mongo.find_one(:mongo, @collection, %{_id: id}) do
+      nil ->
+        {:error, :not_found}
+
+      page ->
+        {:ok,
+         %Page{
+           id: page["_id"],
+           title: page["title"],
+           content: page["content"],
+           parent_id: page["parent_id"]
+         }}
+    end
   end
 
   @impl true

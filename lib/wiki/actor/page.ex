@@ -6,9 +6,16 @@ defmodule Wiki.Actor.Page do
   @table :page
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.MongoImpl)
 
+  @type state :: %{
+          id: integer(),
+          title: String.t(),
+          content: String.t(),
+          parent_id: integer() | nil
+        }
+
   defp get_pid(id) do
     case GenServer.whereis({:global, {__MODULE__, id}}) do
-      nil -> start_link(id)
+      nil -> start_link(id) |> elem(1)
       pid -> pid
     end
   end
@@ -16,13 +23,14 @@ defmodule Wiki.Actor.Page do
   defp start_link(id) do
     page =
       case @page_store.fetch_by_id(id) do
-        nil -> %{}
-        page -> page
+        {:ok, page} -> page
+        error -> error
       end
 
     case GenServer.start_link(__MODULE__, page, {:global, {__MODULE__, id}}) do
       {:ok, pid} -> {:ok, pid}
       {:error, {:already_started, pid}} -> {:ok, pid}
+      error -> error
     end
   end
 
@@ -37,7 +45,7 @@ defmodule Wiki.Actor.Page do
   @spec update(integer(), %{optional(:title) => String.t(), optional(:content) => String.t()}) ::
           :ok
   def update(id, params) do
-    {:ok, pid} = start_link(id)
+    pid = get_pid(id)
     Map.take(params, [:title, :content])
     GenServer.cast(pid, {:update, Map.take(params, [:title, :content])})
   end
@@ -62,6 +70,8 @@ defmodule Wiki.Actor.Page do
       |> Enum.reduce(state, fn {k, v}, acc_state ->
         Map.put(acc_state, k, v)
       end)
+
+    @page_store.update(new_state.id, title: new_state.title, content: new_state.content)
 
     {:noreply, new_state}
   end
