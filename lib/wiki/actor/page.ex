@@ -10,15 +10,6 @@ defmodule Wiki.Actor.Page do
           parent_id: integer() | nil
         }
 
-  @spec get(id :: integer()) :: state()
-  def get(id) do
-    case GenServer.whereis({:global, {__MODULE__, id}}) do
-      nil -> start_link(id) |> elem(1)
-      pid -> pid
-    end
-    |> GenServer.call(:get)
-  end
-
   @spec update(integer(), %{optional(:title) => String.t(), optional(:content) => String.t()}) ::
           :ok
   def update(id, params) do
@@ -33,10 +24,6 @@ defmodule Wiki.Actor.Page do
     id
     |> get_pid()
     |> GenServer.cast(:delete)
-  end
-
-  def init(page) do
-    {:ok, page}
   end
 
   defp get_pid(id) do
@@ -56,6 +43,14 @@ defmodule Wiki.Actor.Page do
     else
       error -> error
     end
+  end
+
+  def init(page) do
+    {:ok, page}
+  end
+
+  def handle_call(:get, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_cast({:update, params}, state) do

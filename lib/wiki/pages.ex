@@ -1,14 +1,11 @@
 defmodule Wiki.Pages do
-  alias Wiki.Actor.Page, as: PageActor
+  alias Wiki.Actor.Page
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.MongoImpl)
 
   @spec get(any) :: {:error, :not_found} | {:ok, Page.t()}
   def get(id) do
-    case PageActor.get(id) do
-      {:ok, pid} -> {:ok, PageActor.state(pid)}
-      _ -> {:error, :not_found}
-    end
+    @page_store.fetch_by_id(id)
   end
 
   @spec get_all(integer(), integer()) :: list(PageIndex.t())

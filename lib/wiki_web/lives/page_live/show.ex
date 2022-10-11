@@ -2,7 +2,7 @@ defmodule WikiWeb.PageLive.Show do
   use WikiWeb, :live_view
 
   alias WikiWeb.PageLive.AncestorNavComponent
-  alias Wiki.PageActors
+  alias Wiki.Pages
   alias Wiki.Actor.Page
 
   def render(assigns) do
@@ -29,7 +29,7 @@ defmodule WikiWeb.PageLive.Show do
 
   def mount(%{"id" => id_str} = _params, _session, socket) do
     id = Transformer.to_integer_or(id_str)
-    if connected?(socket), do: PageActors.subscribe(id)
+    if connected?(socket), do: Pages.subscribe(id)
 
     case get_page_with_children(id) do
       nil ->
@@ -57,8 +57,8 @@ defmodule WikiWeb.PageLive.Show do
 
   def handle_event("delete", _value, %{assigns: %{page: %{id: id}}} = socket) do
     with :ok <- Page.delete(id) do
-      PageActors.broadcast(id, :page_edited)
-      PageActors.broadcast(:page_edited)
+      Pages.broadcast(id, :page_edited)
+      Pages.broadcast(:page_edited)
 
       {:noreply,
        socket
@@ -76,8 +76,8 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   defp get_page_with_children(id) do
-    case PageActors.get(id) do
-      {:ok, page} -> Map.put(page, :children, PageActors.get_all(id, 1, 100))
+    case Pages.get(id) do
+      {:ok, page} -> Map.put(page, :children, Pages.get_all(id, 1, 100))
       _ -> nil
     end
   end
