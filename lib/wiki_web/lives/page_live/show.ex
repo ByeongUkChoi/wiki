@@ -3,7 +3,6 @@ defmodule WikiWeb.PageLive.Show do
 
   alias WikiWeb.PageLive.AncestorNavComponent
   alias Wiki.Pages
-  alias Wiki.Actor.Page
 
   def render(assigns) do
     ~H"""
@@ -50,13 +49,13 @@ defmodule WikiWeb.PageLive.Show do
   end
 
   defp get_ancestors(%{parent_id: parent_id}, ancestors) do
-    {:ok, parent} = Page.get(parent_id)
+    {:ok, parent} = Pages.get(parent_id)
 
     get_ancestors(parent, [parent | ancestors])
   end
 
   def handle_event("delete", _value, %{assigns: %{page: %{id: id}}} = socket) do
-    with :ok <- Page.delete(id) do
+    with :ok <- Pages.delete(id) do
       Pages.broadcast(id, :page_edited)
       Pages.broadcast(:page_edited)
 

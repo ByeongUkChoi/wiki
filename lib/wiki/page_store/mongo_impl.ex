@@ -38,7 +38,8 @@ defmodule Wiki.PageStore.MongoImpl do
 
   @impl true
   def create(title: title, content: content, parent_id: parent_id) do
-    page = %Page{title: title, content: content, parent_id: parent_id}
+    id = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    page = %Page{id: id, title: title, content: content, parent_id: parent_id}
 
     Mongo.insert_one(:mongo, @collection, Mongo.Encoder.encode(page))
     {:ok, page}

@@ -19,15 +19,15 @@ defmodule Wiki.Pages do
   end
 
   def create(title, content, parent_id) do
-    {:ok, pid} = PageActor.create(%{title: title, content: content, parent_id: parent_id})
+    {:ok, pid} = Page.create(%{title: title, content: content, parent_id: parent_id})
   end
 
   def delete(id) do
-    PageActor.delete(id)
+    Page.delete(id)
   end
 
   def update(id, title, content) do
-    PageActor.update(id, %{title: title, content: content})
+    Page.update(id, %{title: title, content: content})
 
     get(id)
   end
