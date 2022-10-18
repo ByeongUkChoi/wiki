@@ -2,7 +2,7 @@ defmodule WikiWeb.PageLive.Edit do
   use WikiWeb, :live_view
 
   alias Wiki.PageStore.Page
-  alias Wiki.Pages
+  alias Wiki.Actor.Page, as: PageActor
   alias Wiki.PageEvent
 
   def render(assigns) do
@@ -35,7 +35,7 @@ defmodule WikiWeb.PageLive.Edit do
 
   def mount(%{"id" => id} = _params, _session, socket) do
     with id <- Transformer.to_integer_or(id),
-         {:ok, page} <- Pages.get(id) do
+         {:ok, page} <- Page.get(id) do
       changeset = page |> Page.changeset(%{}) |> Map.put(:action, :update)
       {:ok, assign(socket, page: page, changeset: changeset)}
     end
@@ -55,7 +55,7 @@ defmodule WikiWeb.PageLive.Edit do
         %{"page" => %{"title" => title, "content" => content}},
         %{assigns: %{page: %{id: id}}} = socket
       ) do
-    with {:ok, %{parent_id: parent_id}} <- Pages.update(id, title, content) do
+    with {:ok, %{parent_id: parent_id}} <- PageActor.update(id, title, content) do
       PageEvent.broadcast(:page_edited)
       PageEvent.broadcast(id, :page_edited)
 
