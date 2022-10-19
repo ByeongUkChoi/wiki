@@ -2,7 +2,7 @@ defmodule WikiWeb.PageLive.Index do
   use WikiWeb, :live_view
 
   alias WikiWeb.PageLive.IndexComponent
-  alias Wiki.Actor.Page
+  alias Wiki.Actor.Pages
   alias Wiki.PageEvent
 
   def render(assigns) do
@@ -15,15 +15,15 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Wiki.Pages.subscribe()
-    pages = Page.get_all(1, 100)
+    if connected?(socket), do: PageEvent.subscribe()
+    pages = Pages.get_all(1, 100)
 
     {:ok, assign(socket, pages: pages)}
   end
 
   def handle_event("open_child", %{"id" => id}, %{assigns: %{pages: pages}} = socket) do
     parent_id = Transformer.to_integer_or(id)
-    children = Page.get_all(parent_id, 1, 100)
+    children = Pages.get_all(parent_id, 1, 100)
 
     pages_with_children =
       pages
@@ -39,7 +39,7 @@ defmodule WikiWeb.PageLive.Index do
   end
 
   def handle_info(event, socket) when event in [:page_created, :page_edited] do
-    pages = Page.get_all(1, 100)
+    pages = Pages.get_all(1, 100)
 
     {:noreply, assign(socket, pages: pages)}
   end

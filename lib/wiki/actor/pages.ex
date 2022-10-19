@@ -1,4 +1,4 @@
-defmodule Wiki.Actor.Page do
+defmodule Wiki.Actor.Pages do
   use GenServer
 
   @page_store Application.compile_env(:wiki, :page_store, Wiki.PageStore.MongoImpl)
